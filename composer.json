@@ -1,0 +1,38 @@
+{
+    "name": "fdevs/serializer",
+    "type": "library",
+    "description": "FDevs Serializer Component",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrey Samusev",
+            "email": "andrey_simfi@list.ru",
+            "homepage": "http://andrey.4devs.io"
+        },
+        {
+            "name": "4devs Community",
+            "homepage": "https://github.com/4devs/cron/contributors"
+        }
+    ],
+    "require": {
+        "symfony/serializer": "~2.8|~3.0",
+        "symfony/property-access": "~2.8|~3.0",
+        "symfony/config": "~2.8|~3.0",
+        "psr/cache": "~1.0",
+        "php": ">=5.5.9"
+    },
+    "require-dev": {
+    },
+    "suggest": {
+    },
+    "autoload": {
+        "psr-4": {
+            "FDevs\\Serializer\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev"
+}

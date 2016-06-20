@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+
+<xsd:schema xmlns="http://4devs.pro/schema/dic/serializer-mapping"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://4devs.pro/schema/dic/serializer-mapping"
+            elementFormDefault="qualified">
+
+    <xsd:annotation>
+        <xsd:documentation><![CDATA[
+      4devs Serializer Mapping Schema, version 1.0
+      Authors: Kévin Dunglas
+
+      A serializer mapping connects attributes with serialization groups.
+    ]]></xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="serializer" type="serializer"/>
+
+    <xsd:complexType name="serializer">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        The root element of the serializer mapping definition.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="class" type="class"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="class">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        Contains serialization for a single class.
+
+        Nested elements may be class property and/or getter definitions.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="property" type="property" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="property">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        Mapping for a single property. The name of the property
+        should be given in the "name" option.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="type" type="type" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="type">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        The type of the property should be given in the "name" option.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="option" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        Option definition. The name of the option should be given in the "name" option.
+        May contain a single value, multiple "value" elements or multiple elements.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0">
+            <xsd:element name="value" type="value" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:choice>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="value" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        A value of an element.
+        May contain a single value, multiple "value" elements or multiple elements.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0">
+            <xsd:element name="value" type="value" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:choice>
+        <xsd:attribute name="key" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+</xsd:schema>
