@@ -145,5 +145,13 @@ $data = [];
 $post = $serializer->serialize($data,Post::class);
 ```
 
+License
+-------
+
+This library is under the MIT license. See the complete license in the library:
+
+    LICENSE
+
+
 ---
 Created by [4devs](http://4devs.pro/) - Check out our [blog](http://4devs.io/) for more insight into this and other open-source projects we release.
