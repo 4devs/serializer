@@ -71,14 +71,17 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
 
         $metadata = new ClassMetadata($class);
 
+        $parents = [];
         // Include constraints from the parent class
         if ($parent = $metadata->getReflectionClass()->getParentClass()) {
-            $metadata->merge($this->getMetadataFor($parent->name));
+            $parents[] = $parent;
         }
-
+        $parents += $metadata->getReflectionClass()->getInterfaces();
         // Include constraints from all implemented interfaces
-        foreach ($metadata->getReflectionClass()->getInterfaces() as $interface) {
-            $metadata->merge($this->getMetadataFor($interface->name));
+        foreach ($parents as $parent) {
+            if ($this->hasMetadataFor($parent->name)) {
+                $metadata->merge($this->getMetadataFor($parent->name));
+            }
         }
         if (null !== $this->loader) {
             $this->loader->loadClassMetadata($metadata);
