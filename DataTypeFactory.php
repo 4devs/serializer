@@ -6,6 +6,7 @@ use FDevs\Serializer\DataType\BooleanType;
 use FDevs\Serializer\DataType\CollectionType;
 use FDevs\Serializer\DataType\DateTimeType;
 use FDevs\Serializer\DataType\DoctrineType;
+use FDevs\Serializer\DataType\FloatType;
 use FDevs\Serializer\DataType\IntegerType;
 use FDevs\Serializer\DataType\ObjectType;
 use FDevs\Serializer\DataType\StringType;
@@ -38,6 +39,7 @@ class DataTypeFactory
     private $mappingTypeList = [
         'int' => IntegerType::class,
         'integer' => IntegerType::class,
+        'float' => FloatType::class,
         'bool' => BooleanType::class,
         'boolean' => BooleanType::class,
         'collection' => CollectionType::class,

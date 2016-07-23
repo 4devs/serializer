@@ -51,6 +51,11 @@ class Post
     protected $user;
 
     /**
+     * @var float
+     */
+    protected $rate;
+
+    /**
      * @var array|Comment[]
      */
     protected $comments;
@@ -95,6 +100,10 @@ class Post
             <type name="object">
                 <option name="class">App\Model\User</option>
             </type>
+        </property>
+
+        <property name="rate">
+            <type name="float"/>
         </property>
 
         <property name="comments">
