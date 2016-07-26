@@ -8,10 +8,11 @@ interface NameConverterInterface extends OptionInterface
     const TYPE_NORMALIZE = 'normalize';
 
     /**
-     * Converts a property name to its normalized value.
+     * Converts a property name by type to value.
      *
-     * @param string $propertyName
-     * @param array  $options
+     * @param string $propertyName name on data
+     * @param array  $options      options in mapping
+     * @param string $type         type convert
      *
      * @return string
      */

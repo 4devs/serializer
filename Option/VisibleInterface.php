@@ -5,9 +5,11 @@ namespace FDevs\Serializer\Option;
 interface VisibleInterface extends OptionInterface
 {
     /**
+     * check shows value.
+     *
      * @param string $propertyName
-     * @param array  $options
-     * @param array  $context
+     * @param array  $options      property config in mapping
+     * @param array  $context      Context options
      *
      * @return bool
      */
