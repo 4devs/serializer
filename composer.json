@@ -23,8 +23,10 @@
         "php": ">=5.5.9"
     },
     "require-dev": {
+        "composer/semver": "~1.4"
     },
     "suggest": {
+        "composer/semver": "use with version options"
     },
     "autoload": {
         "psr-4": {
