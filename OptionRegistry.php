@@ -9,6 +9,7 @@ use FDevs\Serializer\Option\NameConverter\SerializedName;
 use FDevs\Serializer\Option\OptionInterface;
 use FDevs\Serializer\Option\Visible\FieldOption;
 use FDevs\Serializer\Option\Visible\GroupOption;
+use FDevs\Serializer\Option\Visible\Version;
 
 class OptionRegistry
 {
@@ -21,6 +22,7 @@ class OptionRegistry
         'fields' => FieldOption::class,
         'serialized-name' => SerializedName::class,
         'name-prefix' => NamePrefix::class,
+        'version' => Version::class,
     ];
 
     /**
