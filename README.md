@@ -1,6 +1,8 @@
 Serializer
 ==========
 
+[![Build Status](https://travis-ci.org/4devs/serializer.svg?branch=master)](https://travis-ci.org/4devs/serializer)
+
 If you use Symfony 2, you could use our [serializer bridge](https://github.com/4devs/serializer-bridge)!
 
 ## Installation
