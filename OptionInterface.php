@@ -1,11 +1,18 @@
 <?php
 
-namespace FDevs\Serializer\DataType;
+namespace FDevs\Serializer;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-interface TypeInterface
+interface OptionInterface
 {
+    /**
+     * unique name option.
+     *
+     * @return string
+     */
+    public function getName();
+
     /**
      * @param OptionsResolver $resolver
      */

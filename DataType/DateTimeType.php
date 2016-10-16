@@ -25,11 +25,26 @@ class DateTimeType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function supportsDenormalization($data, array $options)
+    {
+        return is_string($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, array $options)
+    {
+        return $data instanceof \DateTime;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
             ->setDefault('format', 'Y-m-d\TH:i:sP')
-            ->setAllowedTypes('format', ['string'])
-        ;
+            ->setAllowedTypes('format', ['string']);
     }
 }

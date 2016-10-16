@@ -6,9 +6,8 @@ use FDevs\Serializer\Exception\NoSuchMetadataException;
 use FDevs\Serializer\Mapping\ClassMetadata;
 use FDevs\Serializer\Mapping\ClassMetadataInterface;
 use FDevs\Serializer\Mapping\Loader\LoaderInterface;
-use Psr\Cache\CacheItemPoolInterface;
 
-class LazyLoadingMetadataFactory implements MetadataFactoryInterface
+class MetadataFactory implements MetadataFactoryInterface
 {
     /**
      * The loader for loading the class metadata.
@@ -16,13 +15,6 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
      * @var LoaderInterface|null
      */
     protected $loader;
-
-    /**
-     * The cache for caching class metadata.
-     *
-     * @var CacheItemPoolInterface|null
-     */
-    protected $cache;
 
     /**
      * The loaded metadata, indexed by class name.
@@ -34,14 +26,12 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
     /**
      * Creates a new metadata factory.
      *
-     * @param LoaderInterface|null        $loader The loader for configuring new metadata
-     * @param CacheItemPoolInterface|null $cache  The cache for persisting metadata
-     *                                            between multiple PHP requests
+     * @param LoaderInterface $loader The loader for configuring new metadata
+     *                                between multiple PHP requests
      */
-    public function __construct(LoaderInterface $loader = null, CacheItemPoolInterface $cache = null)
+    public function __construct(LoaderInterface $loader)
     {
         $this->loader = $loader;
-        $this->cache = $cache;
     }
 
     /**
@@ -58,12 +48,6 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
         if (isset($this->loadedClasses[$class])) {
             return $this->loadedClasses[$class];
         }
-        if (null !== $this->cache) {
-            $cacheItem = $this->cache->getItem($class);
-            if ($this->cache->hasItem($class)) {
-                return $this->loadedClasses[$class] = $cacheItem->get();
-            }
-        }
 
         if (!class_exists($class) && !interface_exists($class)) {
             throw new NoSuchMetadataException(sprintf('The class or interface "%s" does not exist.', $class));
@@ -77,19 +61,13 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
             $parents[] = $parent;
         }
         $parents += $metadata->getReflectionClass()->getInterfaces();
-        // Include constraints from all implemented interfaces
+
+        $this->loader->loadClassMetadata($metadata);
+
         foreach ($parents as $parent) {
             if ($this->hasMetadataFor($parent->name)) {
                 $metadata->merge($this->getMetadataFor($parent->name));
             }
-        }
-        if (null !== $this->loader) {
-            $this->loader->loadClassMetadata($metadata);
-        }
-
-        if (null !== $this->cache) {
-            $cacheItem->set($metadata);
-            $this->cache->save($cacheItem);
         }
 
         return $this->loadedClasses[$class] = $metadata;

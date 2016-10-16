@@ -2,57 +2,104 @@
 
 namespace FDevs\Serializer\Mapping;
 
-class PropertyMetadata implements MetadataInterface
+class PropertyMetadata extends Metadata implements PropertyMetadataInterface
 {
     /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var MetadataType
+     * @var MetadataInterface
      */
     protected $type;
 
     /**
-     * @var array
+     * @var MetadataInterface[]
      */
-    protected $options = [];
+    protected $visible = [];
 
     /**
-     * PropertyMetadata constructor.
-     *
-     * @param string $name
+     * @var MetadataInterface[]
      */
-    public function __construct($name)
+    protected $nameConverter = [];
+
+    /**
+     * @var MetadataInterface
+     */
+    protected $accessor = [];
+
+    /**
+     * @return MetadataInterface
+     */
+    public function getType()
     {
-        $this->name = $name;
+        return $this->type;
+    }
+
+    /**
+     * @param MetadataInterface $type
+     *
+     * @return PropertyMetadata
+     */
+    public function setType(MetadataInterface $type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function merge(MetadataInterface $classMetadata)
+    public function getVisible()
     {
-        array_merge_recursive($this->options, $classMetadata->getOptions());
+        return $this->visible;
     }
 
     /**
-     * @return string
+     * @param MetadataInterface $visible
+     *
+     * @return $this
      */
-    public function getName()
+    public function addVisible(MetadataInterface $visible)
     {
-        return $this->name;
+        $this->visible[] = $visible;
+
+        return $this;
     }
 
     /**
-     * @param string $name
+     * {@inheritdoc}
+     */
+    public function getNameConverter()
+    {
+        return $this->nameConverter;
+    }
+
+    /**
+     * @param MetadataInterface $nameConverter
+     *
+     * @return $this
+     */
+    public function addNameConverter(MetadataInterface $nameConverter)
+    {
+        $this->nameConverter[] = $nameConverter;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAccessor()
+    {
+        return $this->accessor;
+    }
+
+    /**
+     * @param MetadataInterface $accessor
      *
      * @return PropertyMetadata
      */
-    public function setName($name)
+    public function setAccessor(MetadataInterface $accessor)
     {
-        $this->name = $name;
+        $this->accessor = $accessor;
 
         return $this;
     }
@@ -63,57 +110,25 @@ class PropertyMetadata implements MetadataInterface
     public function serialize()
     {
         return serialize([
-            $this->name,
             $this->type,
-            $this->options,
+            $this->accessor,
+            $this->visible,
+            $this->nameConverter,
+            parent::serialize(),
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function unserialize($serialized)
+    public function unserialize($str)
     {
-        list($this->name, $this->type, $this->options) = unserialize($serialized);
-    }
-
-    /**
-     * @return MetadataType
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param MetadataType $type
-     *
-     * @return PropertyMetadata
-     */
-    public function setType(MetadataType $type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return PropertyMetadata
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
-
-        return $this;
+        list(
+            $this->type,
+            $this->accessor,
+            $this->visible,
+            $this->nameConverter,
+            $parentStr) = unserialize($str);
+        parent::unserialize($parentStr);
     }
 }

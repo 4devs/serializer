@@ -8,8 +8,6 @@
     <xsd:annotation>
         <xsd:documentation><![CDATA[
       4devs Serializer Mapping Schema, version 1.0
-      Authors: Kévin Dunglas
-
       A serializer mapping connects attributes with serialization groups.
     ]]></xsd:documentation>
     </xsd:annotation>
@@ -51,6 +49,9 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element name="type" type="type" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="accessor" type="accessor" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="visible" type="visible" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="name-converter" type="name-converter" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="name" type="xsd:string" use="required"/>
@@ -60,6 +61,42 @@
         <xsd:annotation>
             <xsd:documentation><![CDATA[
         The type of the property should be given in the "name" option.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="accessor">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        The accessor of the property should be given in the "name" option.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="visible">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        The visible of the property should be given in the "name" option.
+      ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="option" type="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="name-converter">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+        The visible of the property should be given in the "name" option.
       ]]></xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>

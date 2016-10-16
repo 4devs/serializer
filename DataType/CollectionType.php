@@ -2,31 +2,16 @@
 
 namespace FDevs\Serializer\DataType;
 
-use FDevs\Serializer\DataTypeFactory;
-use FDevs\Serializer\Mapping\MetadataType;
+use FDevs\Serializer\Normalizer\DenormalizerAwareInterface;
+use FDevs\Serializer\Normalizer\DenormalizerAwareTrait;
+use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
+use FDevs\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CollectionType extends AbstractType
+class CollectionType extends AbstractType implements DenormalizerAwareInterface, NormalizerAwareInterface
 {
-    /**
-     * @var DataTypeFactory
-     */
-    protected $dataTypeRegistry;
-
-    /**
-     * @var MetadataType
-     */
-    private $metadataType;
-
-    /**
-     * CollectionType constructor.
-     *
-     * @param DataTypeFactory $dataTypeRegistry
-     */
-    public function __construct(DataTypeFactory $dataTypeRegistry)
-    {
-        $this->dataTypeRegistry = $dataTypeRegistry;
-    }
+    use DenormalizerAwareTrait;
+    use NormalizerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -34,10 +19,8 @@ class CollectionType extends AbstractType
     public function denormalize($data, array $options, array $context = [])
     {
         $result = [];
-        $type = $this->getType($options);
-        $optionsType = $this->getTypeOptions($options);
         foreach ($data as $key => $item) {
-            $result[$key] = $type->denormalize($item, $optionsType, $context);
+            $result[$key] = $this->denormalizer->denormalize($item, $options['data_class'], $options['format'], $context);
         }
 
         return $result;
@@ -49,10 +32,8 @@ class CollectionType extends AbstractType
     public function normalize($data, array $options, array $context = [])
     {
         $result = [];
-        $type = $this->getType($options);
-        $optionsType = $this->getTypeOptions($options);
         foreach ($data as $key => $item) {
-            $result[$key] = $type->normalize($item, $optionsType, $context);
+            $result[$key] = $this->normalizer->normalize($item, $options['format'], $context);
         }
 
         return $result;
@@ -64,45 +45,12 @@ class CollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['type'])
-            ->setDefined(['options'])
-            ->setDefaults(['options' => []])
-            ->addAllowedTypes('type', ['string'])
-            ->addAllowedTypes('options', ['array'])
-        ;
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    private function getTypeOptions(array $options)
-    {
-        return $this->dataTypeRegistry->resolveOptions($this->getMetadataType($options));
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return TypeInterface
-     */
-    private function getType(array $options)
-    {
-        return $this->dataTypeRegistry->getType($this->getMetadataType($options));
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return \FDevs\Serializer\Mapping\MetadataType
-     */
-    private function getMetadataType(array $options)
-    {
-        if (!$this->metadataType) {
-            $this->metadataType = $this->dataTypeRegistry->createType($options['type'], $options['options']);
-        }
-
-        return $this->metadataType;
+            ->setRequired(['data_class'])
+            ->setDefined(['format'])
+            ->setDefaults([
+                'format' => null,
+            ])
+            ->addAllowedTypes('data_class', ['string'])
+            ->addAllowedTypes('format', ['string', 'null']);
     }
 }

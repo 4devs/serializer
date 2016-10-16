@@ -5,11 +5,6 @@ namespace FDevs\Serializer\Mapping;
 interface MetadataInterface extends \Serializable
 {
     /**
-     * @return MetadataType
-     */
-    public function getType();
-
-    /**
      * @return string
      */
     public function getName();

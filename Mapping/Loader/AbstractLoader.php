@@ -2,42 +2,38 @@
 
 namespace FDevs\Serializer\Mapping\Loader;
 
-use FDevs\Serializer\DataTypeFactory;
-use FDevs\Serializer\Mapping\MetadataType;
+use FDevs\Serializer\Mapping\Metadata;
+use FDevs\Serializer\Mapping\MetadataInterface;
+use FDevs\Serializer\OptionRegistry;
 
 abstract class AbstractLoader implements LoaderInterface
 {
     /**
-     * @var DataTypeFactory
+     * @var OptionRegistry
      */
-    private $dataTypeFactory;
+    private $optionRegistry;
 
     /**
-     * @param DataTypeFactory $dataTypeFactory
-     */
-    public function setDataTypeFactory(DataTypeFactory $dataTypeFactory)
-    {
-        $this->dataTypeFactory = $dataTypeFactory;
-    }
-
-    /**
-     * @return DataTypeFactory
-     */
-    protected function getDataTypeFactory()
-    {
-        return $this->dataTypeFactory ?: $this->dataTypeFactory = new DataTypeFactory();
-    }
-
-    /**
-     * Creates a type instance for the given type name.
+     * AbstractLoader constructor.
      *
+     * @param OptionRegistry $optionRegistry
+     */
+    public function __construct(OptionRegistry $optionRegistry)
+    {
+        $this->optionRegistry = $optionRegistry;
+    }
+
+    /**
      * @param string $name
-     * @param mixed  $options The type options
+     * @param string $type
+     * @param array  $option
      *
-     * @return MetadataType
+     * @return MetadataInterface
      */
-    protected function newType($name, array $options = [])
+    protected function getMetadataType($name, $type, array $option = [])
     {
-        return $this->getDataTypeFactory()->createType($name, $options);
+        $obj = $this->optionRegistry->getOption($name, $type);
+
+        return new Metadata(get_class($obj), $option);
     }
 }

@@ -2,10 +2,13 @@
 
 namespace FDevs\Serializer\Mapping\Loader;
 
+use FDevs\Serializer\Accessor\GetSet;
+use FDevs\Serializer\DataType\StringType;
 use FDevs\Serializer\Exception\MappingException;
 use FDevs\Serializer\Mapping\ClassMetadata;
-use FDevs\Serializer\Mapping\MetadataType;
+use FDevs\Serializer\Mapping\MetadataInterface;
 use FDevs\Serializer\Mapping\PropertyMetadata;
+use FDevs\Serializer\OptionRegistry;
 use Symfony\Component\Config\Util\XmlUtils;
 use FDevs\Serializer\Mapping\ClassMetadataInterface;
 
@@ -68,20 +71,39 @@ class XmlFilesLoader extends FilesLoader
 
         foreach ($node->property as $node) {
             $propertyName = (string) $node['name'];
-            $property = new PropertyMetadata((string) $node['name']);
+            $property = new PropertyMetadata($propertyName);
             $options = [];
             if (count($node->type) > 0) {
-                $type = $this->parseType($node->type[0]);
+                $type = $this->parseMetadataType($node->type[0], OptionRegistry::TYPE_DATA_TYPE);
             } else {
-                $type = $this->newType('string');
+                $type = $this->getMetadataType(StringType::class, OptionRegistry::TYPE_DATA_TYPE);
             }
+
+            if (count($node->accessor) > 0) {
+                $accessor = $this->parseMetadataType($node->accessor[0], OptionRegistry::TYPE_ACCESSOR);
+            } else {
+                $accessor = $this->getMetadataType(GetSet::class, OptionRegistry::TYPE_ACCESSOR, ['property' => $propertyName]);
+            }
+
+            if (count($node->visible) > 0) {
+                foreach ($node->visible as $item) {
+                    $property->addVisible($this->parseMetadataType($item, OptionRegistry::TYPE_VISIBLE));
+                }
+            }
+
+            if (count($node->{'name-converter'}) > 0) {
+                foreach ($node->{'name-converter'} as $item) {
+                    $property->addNameConverter($this->parseMetadataType($item, OptionRegistry::TYPE_NAME_CONVERTER));
+                }
+            }
+
             if (count($node->option) > 0) {
                 $options = $this->parseOptions($node->option);
             }
             $property
                 ->setType($type)
-                ->setOptions($options)
-            ;
+                ->setAccessor($accessor)
+                ->setOptions($options);
 
             if (isset($classMetadata[$propertyName])) {
                 $classMetadata[$propertyName]->merge($property);
@@ -93,17 +115,18 @@ class XmlFilesLoader extends FilesLoader
 
     /**
      * @param \SimpleXMLElement $node
+     * @param string            $type
      *
-     * @return MetadataType
+     * @return MetadataInterface
      */
-    private function parseType(\SimpleXMLElement $node)
+    private function parseMetadataType(\SimpleXMLElement $node, $type)
     {
         $options = [];
         if (count($node->option) > 0) {
             $options = $this->parseOptions($node->option);
         }
 
-        return $this->newType((string) $node['name'], $options);
+        return $this->getMetadataType((string) $node['name'], $type, $options);
     }
 
     /**

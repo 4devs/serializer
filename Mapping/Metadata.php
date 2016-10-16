@@ -2,7 +2,7 @@
 
 namespace FDevs\Serializer\Mapping;
 
-class MetadataType implements \Serializable
+class Metadata implements MetadataInterface
 {
     /**
      * @var string
@@ -12,10 +12,10 @@ class MetadataType implements \Serializable
     /**
      * @var array
      */
-    protected $options;
+    protected $options = [];
 
     /**
-     * MetadataType constructor.
+     * Metadata constructor.
      *
      * @param string $name
      * @param array  $options
@@ -37,7 +37,7 @@ class MetadataType implements \Serializable
     /**
      * @param string $name
      *
-     * @return MetadataType
+     * @return Metadata
      */
     public function setName($name)
     {
@@ -57,13 +57,21 @@ class MetadataType implements \Serializable
     /**
      * @param array $options
      *
-     * @return MetadataType
+     * @return Metadata
      */
     public function setOptions($options)
     {
         $this->options = $options;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function merge(MetadataInterface $classMetadata)
+    {
+        $this->options = array_merge_recursive($classMetadata->getOptions(), $this->options);
     }
 
     /**
