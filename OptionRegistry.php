@@ -99,6 +99,7 @@ class OptionRegistry implements OptionRegistryInterface
      */
     public function getOption($name, $type)
     {
+        $name = isset($this->mapping[$type][$name]) ? $this->mapping[$type][$name] : $name;
         if (!isset($this->options[$name])) {
             $this->options[$name] = $this->createOption($name, $type);
         }
@@ -108,12 +109,13 @@ class OptionRegistry implements OptionRegistryInterface
 
     /**
      * @param OptionInterface $option
-     *
+     * @param string $type
      * @return $this
      */
-    public function addOption(OptionInterface $option)
+    public function addOption(OptionInterface $option, $type = self::TYPE_ACCESSOR)
     {
-        $this->options[$option->getName()] = $option;
+        $this->mapping[$type][$option->getName()] = get_class($option);
+        $this->options[get_class($option)] = $option;
         if ($option instanceof OptionRegistryAwareInterface) {
             $option->setOptionRegistry($this);
         }
