@@ -56,7 +56,7 @@ class ObjectType extends AbstractType implements DenormalizerAwareInterface, Nor
                 'data_class' => null,
                 'key' => 'data_class',
             ])
-            ->addAllowedTypes('data_class', ['string'])
+            ->addAllowedTypes('data_class', ['string', 'null'])
             ->addAllowedTypes('key', ['string'])
             ->addAllowedTypes('max_depth', ['integer'])
             ->addAllowedTypes('format', ['integer', 'null']);
