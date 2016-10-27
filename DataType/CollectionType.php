@@ -2,6 +2,7 @@
 
 namespace FDevs\Serializer\DataType;
 
+use FDevs\Serializer\Exception\MappingException;
 use FDevs\Serializer\Normalizer\DenormalizerAwareInterface;
 use FDevs\Serializer\Normalizer\DenormalizerAwareTrait;
 use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
@@ -19,8 +20,13 @@ class CollectionType extends AbstractType implements DenormalizerAwareInterface,
     public function denormalize($data, array $options, array $context = [])
     {
         $result = [];
+        if (!$options['data_class'] && !isset($context[$options['key']])) {
+            throw new MappingException(sprintf('set "data_class" or set context with key "%s"', $options['key']));
+        }
+        $dataClass = $options['data_class'] ?: $context[$options['key']];
+
         foreach ($data as $key => $item) {
-            $result[$key] = $this->denormalizer->denormalize($item, $options['data_class'], $options['format'], $context);
+            $result[$key] = $this->denormalizer->denormalize($item, $dataClass, $options['format'], $context);
         }
 
         return $result;
@@ -45,12 +51,14 @@ class CollectionType extends AbstractType implements DenormalizerAwareInterface,
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['data_class'])
-            ->setDefined(['format'])
+            ->setDefined(['format', 'data_class', 'key'])
             ->setDefaults([
                 'format' => null,
+                'data_class' => null,
+                'key' => 'data_class',
             ])
-            ->addAllowedTypes('data_class', ['string'])
+            ->addAllowedTypes('key', ['string'])
+            ->addAllowedTypes('data_class', ['string', 'null'])
             ->addAllowedTypes('format', ['string', 'null']);
     }
 }
