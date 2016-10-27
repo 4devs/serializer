@@ -68,7 +68,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($visible);
         if (!isset($this->visible[$key])) {
-            $this->visible[$key] = $this->optionRegistry->createOption($visible->getName(), OptionRegistry::TYPE_VISIBLE);
+            $this->visible[$key] = $this->optionRegistry->getOption($visible->getName(), OptionRegistry::TYPE_VISIBLE);
             $optionResolver = new OptionsResolver();
             $this->visible[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_VISIBLE][$key] = $optionResolver->resolve($visible->getOptions());
@@ -84,7 +84,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($convert);
         if (!isset($this->convert[$key])) {
-            $this->convert[$key] = $this->optionRegistry->createOption($convert->getName(), OptionRegistry::TYPE_NAME_CONVERTER);
+            $this->convert[$key] = $this->optionRegistry->getOption($convert->getName(), OptionRegistry::TYPE_NAME_CONVERTER);
             $optionResolver = new OptionsResolver();
             $this->convert[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_NAME_CONVERTER][$key] = $optionResolver->resolve($convert->getOptions());
@@ -100,7 +100,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($accessor);
         if (!isset($this->accessor[$key])) {
-            $this->accessor[$key] = $this->optionRegistry->createOption($accessor->getName(), OptionRegistry::TYPE_ACCESSOR);
+            $this->accessor[$key] = $this->optionRegistry->getOption($accessor->getName(), OptionRegistry::TYPE_ACCESSOR);
             $optionResolver = new OptionsResolver();
             $this->accessor[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_ACCESSOR][$key] = $optionResolver->resolve($accessor->getOptions());
@@ -140,7 +140,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($accessor);
         if (!isset($this->accessor[$key])) {
-            $this->accessor[$key] = $this->optionRegistry->createOption($accessor->getName(), OptionRegistry::TYPE_ACCESSOR);
+            $this->accessor[$key] = $this->optionRegistry->getOption($accessor->getName(), OptionRegistry::TYPE_ACCESSOR);
             $optionResolver = new OptionsResolver();
             $this->accessor[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_ACCESSOR][$key] = $optionResolver->resolve($accessor->getOptions());
