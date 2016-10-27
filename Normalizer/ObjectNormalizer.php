@@ -113,7 +113,6 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
     public function normalize($object, $format = null, array $context = [])
     {
         $classMetadata = $this->metadataFactory->getMetadataFor($object);
-        dump($classMetadata);
         $data = [];
         foreach ($classMetadata as $propertyMetadata) {
             try {

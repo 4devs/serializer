@@ -116,7 +116,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($type);
         if (!isset($this->normalizer[$key])) {
-            $this->normalizer[$key] = $this->optionRegistry->createOption($type->getName(), OptionRegistry::TYPE_DATA_TYPE);
+            $this->normalizer[$key] = $this->optionRegistry->getDataType($type->getName());
             $optionResolver = new OptionsResolver();
             $this->normalizer[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_DATA_TYPE][$key] = $optionResolver->resolve($type->getOptions());
@@ -156,7 +156,7 @@ class OptionManager implements OptionManagerInterface
     {
         $key = spl_object_hash($accessor);
         if (!isset($this->denormalizer[$key])) {
-            $this->denormalizer[$key] = $this->optionRegistry->createOption($accessor->getName(), OptionRegistry::TYPE_DATA_TYPE);
+            $this->denormalizer[$key] = $this->optionRegistry->getDataType($accessor->getName());
             $optionResolver = new OptionsResolver();
             $this->denormalizer[$key]->configureOptions($optionResolver);
             $this->option[OptionRegistry::TYPE_DATA_TYPE][$key] = $optionResolver->resolve($accessor->getOptions());

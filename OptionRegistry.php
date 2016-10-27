@@ -2,6 +2,8 @@
 
 namespace FDevs\Serializer;
 
+use FDevs\Serializer\Accessor\GetSet;
+use FDevs\Serializer\DataType\ArrayType;
 use FDevs\Serializer\DataType\BooleanType;
 use FDevs\Serializer\DataType\CollectionType;
 use FDevs\Serializer\DataType\DateTimeType;
@@ -20,7 +22,7 @@ use FDevs\Serializer\Visible\Group;
 use FDevs\Serializer\Visible\Nullable;
 use FDevs\Serializer\Visible\Version;
 
-class OptionRegistry
+class OptionRegistry implements OptionRegistryInterface
 {
     const TYPE_VISIBLE = 'visible';
     const TYPE_NAME_CONVERTER = 'name_converter';
@@ -43,6 +45,7 @@ class OptionRegistry
         ],
         self::TYPE_ACCESSOR => [
             'property' => Property::class,
+            'get-set' => GetSet::class,
         ],
         self::TYPE_DATA_TYPE => [
             'int' => IntegerType::class,
@@ -55,6 +58,7 @@ class OptionRegistry
             'doctrine' => DoctrineType::class,
             'object' => ObjectType::class,
             'string' => StringType::class,
+            'array' => ArrayType::class,
         ],
     ];
 
@@ -62,6 +66,14 @@ class OptionRegistry
      * @var OptionInterface[]
      */
     private $options = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataType($name)
+    {
+        return $this->getOption($name, self::TYPE_DATA_TYPE);
+    }
 
     /**
      * @param string $name
@@ -102,6 +114,9 @@ class OptionRegistry
     public function addOption(OptionInterface $option)
     {
         $this->options[$option->getName()] = $option;
+        if ($option instanceof OptionRegistryAwareInterface) {
+            $option->setOptionRegistry($this);
+        }
 
         return $this;
     }
@@ -122,6 +137,9 @@ class OptionRegistry
             $option = new $name();
         } else {
             throw new OptionNotFoundException($name, $type);
+        }
+        if ($option instanceof OptionRegistryAwareInterface) {
+            $option->setOptionRegistry($this);
         }
 
         return $option;
