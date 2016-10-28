@@ -24,10 +24,6 @@ use FDevs\Serializer\Visible\Version;
 
 class OptionRegistry implements OptionRegistryInterface
 {
-    const TYPE_VISIBLE = 'visible';
-    const TYPE_NAME_CONVERTER = 'name_converter';
-    const TYPE_ACCESSOR = 'accessor';
-    const TYPE_DATA_TYPE = 'type';
     /**
      * @var array
      */
@@ -99,9 +95,16 @@ class OptionRegistry implements OptionRegistryInterface
      */
     public function getOption($name, $type)
     {
-        $name = isset($this->mapping[$type][$name]) ? $this->mapping[$type][$name] : $name;
+        if (!isset($this->options[$name]) && class_exists($name)) {
+            $name = array_search($name, $this->mapping[$type]) ?: $name;
+        }
         if (!isset($this->options[$name])) {
-            $this->options[$name] = $this->createOption($name, $type);
+            $option = $this->createOption($name, $type);
+            $name = $option->getName();
+            $this->options[$name] = $option;
+            if (!isset($this->mapping[$type][$name])) {
+                $this->mapping[$type][$name] = get_class($option);
+            }
         }
 
         return $this->options[$name];
@@ -109,13 +112,13 @@ class OptionRegistry implements OptionRegistryInterface
 
     /**
      * @param OptionInterface $option
-     * @param string $type
+     * @param string|null     $name
+     *
      * @return $this
      */
-    public function addOption(OptionInterface $option, $type = self::TYPE_ACCESSOR)
+    public function addOption(OptionInterface $option, $name = null)
     {
-        $this->mapping[$type][$option->getName()] = get_class($option);
-        $this->options[get_class($option)] = $option;
+        $this->options[$name ?: $option->getName()] = $option;
         if ($option instanceof OptionRegistryAwareInterface) {
             $option->setOptionRegistry($this);
         }
@@ -130,7 +133,7 @@ class OptionRegistry implements OptionRegistryInterface
      *
      * @throws OptionNotFoundException
      */
-    public function createOption($name, $type)
+    private function createOption($name, $type)
     {
         if (isset($this->mapping[$type][$name])) {
             $class = $this->mapping[$type][$name];
@@ -140,6 +143,7 @@ class OptionRegistry implements OptionRegistryInterface
         } else {
             throw new OptionNotFoundException($name, $type);
         }
+
         if ($option instanceof OptionRegistryAwareInterface) {
             $option->setOptionRegistry($this);
         }
