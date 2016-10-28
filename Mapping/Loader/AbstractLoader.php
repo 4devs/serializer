@@ -5,6 +5,7 @@ namespace FDevs\Serializer\Mapping\Loader;
 use FDevs\Serializer\Mapping\Metadata;
 use FDevs\Serializer\Mapping\MetadataInterface;
 use FDevs\Serializer\OptionRegistry;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractLoader implements LoaderInterface
 {
