@@ -32,12 +32,12 @@ class ObjectType extends AbstractType implements DenormalizerAwareInterface, Nor
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, array $options, array $context = [])
+    public function normalize($object, array $options, array $context = [])
     {
         $data = null;
         if (!isset($context[self::KEY_MAX_DEPTH]) || $context[self::KEY_MAX_DEPTH] > 0) {
             $context[self::KEY_MAX_DEPTH] = isset($context[self::KEY_MAX_DEPTH]) ? $context[self::KEY_MAX_DEPTH] - 1 : $options['max_depth'];
-            $data = $this->getNormalizer()->normalize($data, $options['format'], $context);
+            $data = $this->getNormalizer()->normalize($object, $options['format'], $context);
         }
 
         return $data;
