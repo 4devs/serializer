@@ -5,6 +5,7 @@ namespace FDevs\Serializer\Mapping\Loader;
 use FDevs\Serializer\Mapping\Metadata;
 use FDevs\Serializer\Mapping\MetadataInterface;
 use FDevs\Serializer\OptionRegistry;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractLoader implements LoaderInterface
 {
@@ -33,7 +34,10 @@ abstract class AbstractLoader implements LoaderInterface
     protected function getMetadataType($name, $type, array $option = [])
     {
         $obj = $this->optionRegistry->getOption($name, $type);
+        $resolver = new OptionsResolver();
+        $obj->configureOptions($resolver);
+        $option = $resolver->resolve($option);
 
-        return new Metadata(get_class($obj), $option);
+        return new Metadata($name, $option);
     }
 }
