@@ -3,13 +3,17 @@
 namespace FDevs\Serializer\Accessor;
 
 use FDevs\Serializer\Option\AccessorInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
+use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 
-class Property implements AccessorInterface
+class Property implements AccessorInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
     /**
      * @var PropertyAccessorInterface
      */
@@ -30,7 +34,19 @@ class Property implements AccessorInterface
      */
     public function getValue($object, array $options = [], array $context = [])
     {
-        return $this->propertyAccessor->getValue($object, $options['property']);
+        $value = null;
+        try {
+            $value = $this->propertyAccessor->getValue($object, $options['property']);
+        } catch (ExceptionInterface $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+            }
+            if ($options['strict']) {
+                throw $e;
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -48,7 +64,10 @@ class Property implements AccessorInterface
     {
         $resolver
             ->setRequired(['property'])
-            ->addAllowedTypes('property', ['string', PropertyPathInterface::class]);
+            ->setDefined(['strict'])
+            ->setDefaults(['strict' => true])
+            ->addAllowedTypes('property', ['string', PropertyPathInterface::class])
+            ->addAllowedTypes('strict', ['boolean']);
     }
 
     /**
