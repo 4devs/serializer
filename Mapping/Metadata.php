@@ -71,7 +71,7 @@ class Metadata implements MetadataInterface
      */
     public function merge(MetadataInterface $classMetadata)
     {
-        $this->options = array_merge_recursive($classMetadata->getOptions(), $this->options);
+        $this->options = array_replace_recursive($classMetadata->getOptions(), $this->options);
     }
 
     /**
