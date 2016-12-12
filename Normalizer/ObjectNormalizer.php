@@ -117,9 +117,11 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
         foreach ($classMetadata as $propertyMetadata) {
             try {
                 $property = $this->propertyFactory->createNormalizeProperty($propertyMetadata, $context, $this->normalizer ?: $this);
-                $value = $property->getValue($object);
-                if ($property->isVisible($value)) {
-                    $data[$property->getName()] = $property->normalize($value);
+                if ($property->isVisible()) {
+                    $value = $property->getValue($object);
+                    if ($property->isVisibleValue($value)) {
+                        $data[$property->getName()] = $property->normalize($value);
+                    }
                 }
             } catch (\Exception $e) {
                 $this->log(LogLevel::ERROR, $e->getMessage(), ['property' => $propertyMetadata, 'context' => $context, 'object' => $object, 'format' => $format]);

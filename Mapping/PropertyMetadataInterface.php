@@ -11,8 +11,20 @@ interface PropertyMetadataInterface extends MetadataInterface
 
     /**
      * @return MetadataInterface[]
+     *
+     * @deprecated
      */
     public function getVisible();
+
+    /**
+     * @return MetadataInterface[]
+     */
+    public function getVisibility();
+
+    /**
+     * @return MetadataInterface[]
+     */
+    public function getAdvancedVisibility();
 
     /**
      * @return MetadataInterface[]

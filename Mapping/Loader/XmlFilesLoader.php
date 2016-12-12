@@ -63,16 +63,13 @@ class XmlFilesLoader extends FilesLoader
      */
     private function loadClassMetadataFromXml(ClassMetadata $classMetadata, \SimpleXMLElement $node)
     {
-        $options = [];
-        if (count($node->option) > 0) {
-            $options = $this->parseOptions($node->option);
-        }
+        $options = $this->parseOptions($node);
         $classMetadata->setOptions($options);
 
         foreach ($node->property as $node) {
             $propertyName = (string) $node['name'];
             $property = new PropertyMetadata($propertyName);
-            $options = [];
+            $options = $this->parseOptions($node);
             if (count($node->type) > 0) {
                 $type = $this->parseMetadataType($node->type[0], OptionRegistry::TYPE_DATA_TYPE);
             } else {
@@ -80,29 +77,21 @@ class XmlFilesLoader extends FilesLoader
             }
 
             if (count($node->accessor) > 0) {
-                $accessor = $this->parseMetadataType($node->accessor[0], OptionRegistry::TYPE_ACCESSOR);
+                $this->addPropertyMetadata($property, (string) $node->accessor[0]['name'], $this->parseOptions($node->accessor[0]));
             } else {
-                $accessor = $this->getMetadataType(GetSet::class, OptionRegistry::TYPE_ACCESSOR, ['property' => $propertyName]);
+                $this->addPropertyMetadata($property, GetSet::class, ['property' => $propertyName]);
             }
 
-            if (count($node->visible) > 0) {
-                foreach ($node->visible as $item) {
-                    $property->addVisible($this->parseMetadataType($item, OptionRegistry::TYPE_VISIBLE));
-                }
+            foreach ($node->visible as $item) {
+                $this->addPropertyMetadata($property, (string) $item['name'], $this->parseOptions($item));
             }
 
-            if (count($node->{'name-converter'}) > 0) {
-                foreach ($node->{'name-converter'} as $item) {
-                    $property->addNameConverter($this->parseMetadataType($item, OptionRegistry::TYPE_NAME_CONVERTER));
-                }
+            foreach ($node->{'name-converter'} as $item) {
+                $this->addPropertyMetadata($property, (string) $item['name'], $this->parseOptions($item));
             }
 
-            if (count($node->option) > 0) {
-                $options = $this->parseOptions($node->option);
-            }
             $property
                 ->setType($type)
-                ->setAccessor($accessor)
                 ->setOptions($options);
 
             if (isset($classMetadata[$propertyName])) {
@@ -121,10 +110,7 @@ class XmlFilesLoader extends FilesLoader
      */
     private function parseMetadataType(\SimpleXMLElement $node, $type)
     {
-        $options = [];
-        if (count($node->option) > 0) {
-            $options = $this->parseOptions($node->option);
-        }
+        $options = $this->parseOptions($node);
 
         return $this->getMetadataType((string) $node['name'], $type, $options);
     }
@@ -136,23 +122,23 @@ class XmlFilesLoader extends FilesLoader
      *
      * @return array The values
      */
-    protected function parseValues(\SimpleXMLElement $nodes)
+    protected function parseValues(\SimpleXMLElement $node)
     {
         $values = [];
 
-        foreach ($nodes as $node) {
-            if (count($node) > 0) {
-                if (count($node->value) > 0) {
-                    $value = $this->parseValues($node->value);
+        foreach ($node->value as $value) {
+            if ($value->count() > 0) {
+                if (count($value->value) > 0) {
+                    $value = $this->parseValues($value);
                 } else {
                     $value = [];
                 }
             } else {
-                $value = trim($node);
+                $value = trim($value);
             }
 
-            if (isset($node['key'])) {
-                $values[(string) $node['key']] = $value;
+            if (isset($value['key'])) {
+                $values[(string) $value['key']] = $value;
             } else {
                 $values[] = $value;
             }
@@ -168,25 +154,25 @@ class XmlFilesLoader extends FilesLoader
      *
      * @return array The options
      */
-    protected function parseOptions(\SimpleXMLElement $nodes)
+    protected function parseOptions(\SimpleXMLElement $node)
     {
         $options = [];
-
-        foreach ($nodes as $node) {
-            if (count($node) > 0) {
-                if (count($node->value) > 0) {
-                    $value = $this->parseValues($node->value);
+        /** @var \SimpleXMLElement $option */
+        foreach ($node->option as $option) {
+            if ($option->count() > 0) {
+                if (count($option->value) > 0) {
+                    $value = $this->parseValues($option);
                 } else {
                     $value = [];
                 }
             } else {
-                $value = XmlUtils::phpize($node);
+                $value = XmlUtils::phpize($option);
                 if (is_string($value)) {
                     $value = trim($value);
                 }
             }
 
-            $options[(string) $node['name']] = $value;
+            $options[(string) $option['name']] = $value;
         }
 
         return $options;

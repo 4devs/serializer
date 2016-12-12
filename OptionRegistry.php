@@ -17,10 +17,10 @@ use FDevs\Serializer\Accessor\Property;
 use FDevs\Serializer\NameConverter\CamelCaseToSnakeCase;
 use FDevs\Serializer\NameConverter\Composition;
 use FDevs\Serializer\NameConverter\SerializedName;
-use FDevs\Serializer\Visible\Field;
-use FDevs\Serializer\Visible\Group;
-use FDevs\Serializer\Visible\Nullable;
-use FDevs\Serializer\Visible\Version;
+use FDevs\Serializer\Visibility\Field;
+use FDevs\Serializer\Visibility\Group;
+use FDevs\Serializer\Visibility\Nullable;
+use FDevs\Serializer\Visibility\Version;
 
 class OptionRegistry implements OptionRegistryInterface
 {
@@ -86,15 +86,16 @@ class OptionRegistry implements OptionRegistryInterface
     }
 
     /**
-     * @param string $name class or name
-     * @param string $type
+     * @param string      $name class or name
+     * @param string|null $type
      *
      * @return OptionInterface
      *
      * @throws OptionNotFoundException
      */
-    public function getOption($name, $type)
+    public function getOption($name, $type = null)
     {
+        $type = $type ?: $this->getTypeByName($name);
         if (!isset($this->options[$name]) && class_exists($name)) {
             $name = array_search($name, $this->mapping[$type]) ?: $name;
         }
@@ -108,6 +109,18 @@ class OptionRegistry implements OptionRegistryInterface
         }
 
         return $this->options[$name];
+    }
+
+    private function getTypeByName($name)
+    {
+        $type = null;
+        foreach ($this->mapping as $type => $options) {
+            if (isset($options[$name]) || array_search($name, $options)) {
+                break;
+            }
+        }
+
+        return $type;
     }
 
     /**

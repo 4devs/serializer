@@ -4,8 +4,9 @@ namespace FDevs\Serializer\Visible;
 
 use FDevs\Serializer\Option\VisibleInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use FDevs\Serializer\Visibility\Group as Visibility;
 
-class Group implements VisibleInterface
+class Group extends Visibility implements VisibleInterface
 {
     /**
      * {@inheritdoc}
@@ -20,19 +21,7 @@ class Group implements VisibleInterface
      */
     public function isVisible($propertyName, $value, array $options, array $context)
     {
-        $show = false;
-        if (!$options['required'] && !isset($context[$options['key']])) {
-            $show = true;
-        } else {
-            foreach ($options as $option) {
-                if (in_array($option, $context[$options['key']])) {
-                    $show = true;
-                    break;
-                }
-            }
-        }
-
-        return $show;
+        return parent::isVisibleProperty($propertyName, $options, $context);
     }
 
     /**
