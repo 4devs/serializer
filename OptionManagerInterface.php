@@ -10,14 +10,22 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 interface OptionManagerInterface
 {
     /**
-     * @param MetadataInterface $visible
+     * @param MetadataInterface $metadata
      * @param string            $name
      * @param mixed             $value
      * @param array             $context
      *
      * @return bool
      */
-    public function isVisible(MetadataInterface $visible, $name, $value, array $context = []);
+    public function isVisibleValue(MetadataInterface $metadata, $name, $value, array $context = []);
+    /**
+     * @param MetadataInterface $metadata
+     * @param string            $name
+     * @param array             $context
+     *
+     * @return bool
+     */
+    public function isVisibleProperty(MetadataInterface $metadata, $name, array $context = []);
 
     /**
      * @param MetadataInterface $convert

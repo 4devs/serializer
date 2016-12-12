@@ -3,10 +3,9 @@
 namespace FDevs\Serializer\Visible;
 
 use FDevs\Serializer\Option\VisibleInterface;
-use Composer\Semver\Semver;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use FDevs\Serializer\Visibility\Version as Visibility;
 
-class Version implements VisibleInterface
+class Version extends Visibility implements VisibleInterface
 {
     /**
      * {@inheritdoc}
@@ -21,19 +20,6 @@ class Version implements VisibleInterface
      */
     public function isVisible($propertyName, $value, array $options, array $context)
     {
-        return !isset($context[$options['key']]) || Semver::satisfies($context[$options['key']], $options['version']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver
-            ->setRequired(['version'])
-            ->setDefined(['key'])
-            ->setDefault('key', 'version')
-            ->setAllowedTypes('key', ['string'])
-            ->setAllowedTypes('version', ['string']);
+        return parent::isVisibleProperty($propertyName, $options, $context);
     }
 }

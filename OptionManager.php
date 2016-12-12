@@ -4,13 +4,14 @@ namespace FDevs\Serializer;
 
 use FDevs\Serializer\Exception\UnsupportedDataTypeException;
 use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
+use FDevs\Serializer\Visibility\AdvancedVisibilityInterface;
+use FDevs\Serializer\Visibility\VisibilityInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use FDevs\Serializer\DataType\NormalizerInterface as DataNormalizer;
 use FDevs\Serializer\Mapping\MetadataInterface;
 use FDevs\Serializer\Normalizer\DenormalizerAwareInterface;
 use FDevs\Serializer\Option\AccessorInterface;
 use FDevs\Serializer\Option\NameConverterInterface;
-use FDevs\Serializer\Option\VisibleInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -25,11 +26,6 @@ class OptionManager implements OptionManagerInterface
      * @var array
      */
     private $option;
-
-    /**
-     * @var VisibleInterface[]
-     */
-    private $visible;
 
     /**
      * @var NameConverterInterface[]
@@ -64,17 +60,23 @@ class OptionManager implements OptionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isVisible(MetadataInterface $visible, $name, $value, array $context = [])
+    public function isVisibleProperty(MetadataInterface $metadata, $name, array $context = [])
     {
-        $key = spl_object_hash($visible);
-        if (!isset($this->visible[$key])) {
-            $this->visible[$key] = $this->optionRegistry->getOption($visible->getName(), OptionRegistry::TYPE_VISIBLE);
-            $optionResolver = new OptionsResolver();
-            $this->visible[$key]->configureOptions($optionResolver);
-            $this->option[OptionRegistry::TYPE_VISIBLE][$key] = $optionResolver->resolve($visible->getOptions());
-        }
+        /** @var VisibilityInterface $visible */
+        $visible = $this->optionRegistry->getOption($metadata->getName());
 
-        return $this->visible[$key]->isVisible($name, $value, $this->option[OptionRegistry::TYPE_VISIBLE][$key], $context);
+        return $visible->isVisibleProperty($name, $metadata->getOptions(), $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isVisibleValue(MetadataInterface $metadata, $name, $value, array $context = [])
+    {
+        /** @var AdvancedVisibilityInterface $visible */
+        $visible = $this->optionRegistry->getOption($metadata->getName());
+
+        return $visible->isVisibleValue($name, $value, $metadata->getOptions(), $context);
     }
 
     /**

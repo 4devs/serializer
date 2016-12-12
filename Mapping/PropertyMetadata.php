@@ -12,7 +12,12 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * @var MetadataInterface[]
      */
-    protected $visible = [];
+    protected $visibility = [];
+
+    /**
+     * @var MetadataInterface[]
+     */
+    protected $advancedVisibility = [];
 
     /**
      * @var MetadataInterface[]
@@ -49,19 +54,53 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
      */
     public function getVisible()
     {
-        return $this->visible;
+        return $this->advancedVisibility;
     }
 
     /**
      * @param MetadataInterface $visible
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function addVisible(MetadataInterface $visible)
     {
-        $this->visible[] = $visible;
+        $this->advancedVisibility[] = $visible;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdvancedVisibility()
+    {
+        return $this->advancedVisibility;
+    }
+
+    /**
+     * @param MetadataInterface $visibility
+     */
+    public function addVisibility(MetadataInterface $visibility)
+    {
+        $this->visibility[] = $visibility;
+    }
+
+    /**
+     * @param MetadataInterface $advancedVisibility
+     */
+    public function addAdvancedVisibility(MetadataInterface $advancedVisibility)
+    {
+        $this->advancedVisibility[] = $advancedVisibility;
     }
 
     /**

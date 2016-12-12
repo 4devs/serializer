@@ -4,8 +4,9 @@ namespace FDevs\Serializer\Visible;
 
 use FDevs\Serializer\Option\VisibleInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use FDevs\Serializer\Visibility\Field as Visibility;
 
-class Field implements VisibleInterface
+class Field extends Visibility implements VisibleInterface
 {
     /**
      * {@inheritdoc}
@@ -20,7 +21,7 @@ class Field implements VisibleInterface
      */
     public function isVisible($propertyName, $value, array $options, array $context)
     {
-        return $options['required'] && (!isset($context[$options['key']]) || !is_array($context[$options['key']]) || in_array($propertyName, $context[$options['key']]));
+        return parent::isVisibleProperty($propertyName, $options, $context);
     }
 
     /**
