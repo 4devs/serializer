@@ -1,24 +1,24 @@
 <?php
 
-namespace FDevs\Serializer\Tests\Option;
+namespace FDevs\Serializer\Tests;
 
 use FDevs\Serializer\Option\NameConverterInterface;
-use FDevs\Serializer\Option\OptionInterface;
-use FDevs\Serializer\Option\VisibleInterface;
+use FDevs\Serializer\OptionInterface;
+use FDevs\Serializer\Visibility\VisibilityInterface;
 
-abstract class OptionTest extends \PHPUnit_Framework_TestCase
+abstract class OptionTest extends TestCase
 {
     /**
-     * @return OptionInterface|VisibleInterface|NameConverterInterface
+     * @return OptionInterface|VisibilityInterface|NameConverterInterface
      */
-    abstract public function init();
+    abstract public function create();
 
     /**
      * test interface.
      */
     public function testInterface()
     {
-        $option = $this->init();
+        $option = $this->create();
         $this->assertInstanceOf(OptionInterface::class, $option);
     }
 
@@ -27,7 +27,7 @@ abstract class OptionTest extends \PHPUnit_Framework_TestCase
      */
     public function testName()
     {
-        $option = $this->init();
+        $option = $this->create();
         $this->assertInternalType('string', $option->getName());
     }
 }

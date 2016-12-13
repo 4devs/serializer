@@ -12,19 +12,7 @@ class Group extends AbstractOption implements VisibilityInterface
      */
     public function isVisibleProperty($propertyName, array $options, array $context)
     {
-        $show = false;
-        if (!$options['required'] && !isset($context[$options['key']])) {
-            $show = true;
-        } elseif (isset($context[$options['key']])) {
-            foreach ($options as $option) {
-                if (in_array($option, $context[$options['key']])) {
-                    $show = true;
-                    break;
-                }
-            }
-        }
-
-        return $show;
+        return isset($context[$options['key']]) ? count(array_intersect((array)$context[$options['key']], $options['groups'])) > 0 : !$options['required'];
     }
 
     /**

@@ -91,11 +91,8 @@ abstract class AbstractLoader implements LoaderInterface
      */
     protected function getMetadataType($name, $type, array $option = [])
     {
-        $obj = $this->optionRegistry->getOption($name, $type);
-        $resolver = new OptionsResolver();
-        $obj->configureOptions($resolver);
-        $option = $resolver->resolve($option);
+        $obj = $this->getOption($name, $type);
 
-        return new Metadata($name, $option);
+        return new Metadata($name, $this->resolveOptions($obj, $option));
     }
 }

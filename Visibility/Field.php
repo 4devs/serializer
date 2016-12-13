@@ -12,7 +12,7 @@ class Field extends AbstractOption implements VisibilityInterface
      */
     public function isVisibleProperty($propertyName, array $options, array $context)
     {
-        return $options['required'] && (!isset($context[$options['key']]) || !is_array($context[$options['key']]) || in_array($propertyName, $context[$options['key']]));
+        return isset($context[$options['key']]) && is_array($context[$options['key']]) ? in_array($propertyName, $context[$options['key']]) : !$options['required'];
     }
 
     /**
