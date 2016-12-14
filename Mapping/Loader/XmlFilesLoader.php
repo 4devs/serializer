@@ -126,19 +126,15 @@ class XmlFilesLoader extends FilesLoader
     {
         $values = [];
 
-        foreach ($node->value as $value) {
-            if ($value->count() > 0) {
-                if (count($value->value) > 0) {
-                    $value = $this->parseValues($value);
-                } else {
-                    $value = [];
-                }
+        foreach ($node->value as $item) {
+            if ($item->count() > 0) {
+                $value = $this->parseValues($item);
             } else {
-                $value = trim($value);
+                $value = trim($item);
             }
 
-            if (isset($value['key'])) {
-                $values[(string) $value['key']] = $value;
+            if (isset($item['key'])) {
+                $values[(string) $item['key']] = $value;
             } else {
                 $values[] = $value;
             }
