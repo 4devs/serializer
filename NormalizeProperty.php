@@ -28,27 +28,31 @@ class NormalizeProperty extends Property implements NormalizePropertyInterface
      */
     public function isVisible()
     {
+        $visible = true;
         foreach ($this->meta->getVisibility() as $metadata) {
-            if (!$this->optionManager->isVisibleProperty($metadata, $this->getName(), $this->context)) {
-                return false;
+            $visible = $this->optionManager->isVisibleProperty($metadata, $this->getName(), $this->context);
+            if (true === $visible) {
+                break;
             }
         }
 
-        return true;
+        return $visible;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isVisibleValue($value)
+   public function isVisibleValue($value)
     {
+        $visible = true;
         foreach ($this->meta->getAdvancedVisibility() as $metadata) {
-            if (!$this->optionManager->isVisibleValue($metadata, $this->getName(), $value, $this->context)) {
-                return false;
+            $visible = $this->optionManager->isVisibleValue($metadata, $this->getName(), $value, $this->context);
+            if (true === $visible) {
+                break;
             }
         }
 
-        return true;
+        return $visible;
     }
 
     /**
