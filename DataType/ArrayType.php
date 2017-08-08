@@ -2,7 +2,7 @@
 
 namespace FDevs\Serializer\DataType;
 
-use FDevs\Serializer\OptionRegistry;
+use FDevs\Serializer\OptionInterface;
 use FDevs\Serializer\OptionRegistryAwareInterface;
 use FDevs\Serializer\OptionRegistryAwareTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,13 +16,20 @@ class ArrayType extends AbstractType implements OptionRegistryAwareInterface
     private $type;
 
     /**
+     * @var OptionsResolver[]
+     */
+    private $resolver;
+
+    /**
      * {@inheritdoc}
      */
     public function denormalize($data, array $options, array $context = [])
     {
         $result = [];
+        $type = $this->getDataType($options['type']);
+        $optionType = $this->resolve($type, $options['options_type']);
         foreach ($data as $key => $item) {
-            $result[$key] = $this->getDataType($options['type'])->denormalize($item, $options, $context);
+            $result[$key] = $type->denormalize($item, $optionType, $context);
         }
 
         return $result;
@@ -34,8 +41,10 @@ class ArrayType extends AbstractType implements OptionRegistryAwareInterface
     public function normalize($data, array $options, array $context = [])
     {
         $result = [];
+        $type = $this->getDataType($options['type']);
+        $optionType = $this->resolve($type, $options['options_type']);
         foreach ($data as $key => $item) {
-            $result[$key] = $this->getDataType($options['type'])->normalize($item, $options, $context);
+            $result[$key] = $type->normalize($item, $optionType, $context);
         }
 
         return $result;
@@ -63,11 +72,13 @@ class ArrayType extends AbstractType implements OptionRegistryAwareInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefined(['type'])
             ->setDefaults([
                 'type' => StringType::class,
+                'options_type' => [],
             ])
-            ->setAllowedTypes('type', [AbstractType::class, 'string']);
+            ->setAllowedTypes('type', [AbstractType::class, 'string'])
+            ->setAllowedTypes('options_type', ['array'])
+        ;
     }
 
     /**
@@ -82,5 +93,22 @@ class ArrayType extends AbstractType implements OptionRegistryAwareInterface
         }
 
         return $this->type;
+    }
+
+    /**
+     * @param OptionInterface $type
+     * @param array        $options
+     *
+     * @return array
+     */
+    private function resolve(OptionInterface $type, array $options)
+    {
+        $oid = spl_object_hash($type);
+        if (!isset($this->resolver[$oid])) {
+            $this->resolver[$oid] = new OptionsResolver();
+            $type->configureOptions($this->resolver[$oid]);
+        }
+
+        return $this->resolver[$oid]->resolve($options);
     }
 }
