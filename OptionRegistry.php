@@ -3,6 +3,7 @@
 namespace FDevs\Serializer;
 
 use FDevs\Serializer\Accessor\GetSet;
+use FDevs\Serializer\Accessor\Property;
 use FDevs\Serializer\DataType\ArrayType;
 use FDevs\Serializer\DataType\BooleanType;
 use FDevs\Serializer\DataType\CollectionType;
@@ -13,7 +14,6 @@ use FDevs\Serializer\DataType\IntegerType;
 use FDevs\Serializer\DataType\ObjectType;
 use FDevs\Serializer\DataType\StringType;
 use FDevs\Serializer\Exception\OptionNotFoundException;
-use FDevs\Serializer\Accessor\Property;
 use FDevs\Serializer\NameConverter\CamelCaseToSnakeCase;
 use FDevs\Serializer\NameConverter\Composition;
 use FDevs\Serializer\NameConverter\SerializedName;
@@ -89,9 +89,9 @@ class OptionRegistry implements OptionRegistryInterface
      * @param string      $name class or name
      * @param string|null $type
      *
-     * @return OptionInterface
-     *
      * @throws OptionNotFoundException
+     *
+     * @return OptionInterface
      */
     public function getOption($name, $type = null)
     {
@@ -142,9 +142,9 @@ class OptionRegistry implements OptionRegistryInterface
     /**
      * @param string $name
      *
-     * @return OptionInterface
-     *
      * @throws OptionNotFoundException
+     *
+     * @return OptionInterface
      */
     private function createOption($name, $type)
     {

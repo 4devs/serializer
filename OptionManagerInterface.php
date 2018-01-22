@@ -18,6 +18,7 @@ interface OptionManagerInterface
      * @return bool
      */
     public function isVisibleValue(MetadataInterface $metadata, $name, $value, array $context = []);
+
     /**
      * @param MetadataInterface $metadata
      * @param string            $name
@@ -51,9 +52,9 @@ interface OptionManagerInterface
      * @param array                    $context
      * @param NormalizerInterface|null $normalizer
      *
-     * @return array|string|bool|int|float|null
-     *
      * @throws UnsupportedDataTypeException
+     *
+     * @return array|string|bool|int|float|null
      */
     public function normalize(MetadataInterface $type, $value, array $context = [], NormalizerInterface $normalizer = null);
 
@@ -71,9 +72,9 @@ interface OptionManagerInterface
      * @param array                      $context
      * @param DenormalizerInterface|null $denormalizer
      *
-     * @return mixed
-     *
      * @throws UnsupportedDataTypeException
+     *
+     * @return mixed
      */
     public function denormalize(MetadataInterface $accessor, $value, array $context = [], DenormalizerInterface $denormalizer = null);
 }

@@ -24,16 +24,12 @@
         "symfony/serializer": "~4.0"
     },
     "require-dev": {
-        "psr/cache": "~1.0",
-        "symfony/property-access": "~2.8|~3.0",
         "composer/semver": "~1.4",
         "friendsofphp/php-cs-fixer": "^2.10",
         "phpunit/phpunit": "^6.5"
     },
     "suggest": {
-        "composer/semver": "use with visible versions",
-        "symfony/property-access": "use with accessor property",
-        "psr/cache": "if cache class metadata"
+        "composer/semver": "use with visible versions"
     },
     "config":{
         "bin-dir": "bin",

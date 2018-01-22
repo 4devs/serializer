@@ -42,7 +42,7 @@ class NormalizeProperty extends Property implements NormalizePropertyInterface
     /**
      * {@inheritdoc}
      */
-   public function isVisibleValue($value)
+    public function isVisibleValue($value)
     {
         $visible = true;
         foreach ($this->meta->getAdvancedVisibility() as $metadata) {

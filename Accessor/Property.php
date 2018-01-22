@@ -6,10 +6,10 @@ use FDevs\Serializer\Option\AccessorInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
-use Symfony\Component\PropertyAccess\Exception\ExceptionInterface;
 
 class Property implements AccessorInterface, LoggerAwareInterface
 {
