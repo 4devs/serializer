@@ -2,8 +2,8 @@
 
 namespace FDevs\Serializer\Option\Visible;
 
-use FDevs\Serializer\Option\VisibleInterface;
 use Composer\Semver\Semver;
+use FDevs\Serializer\Option\VisibleInterface;
 
 class Version implements VisibleInterface
 {

@@ -97,9 +97,9 @@ class DataTypeFactory
      * @param string $type
      * @param array  $options
      *
-     * @return MetadataType
-     *
      * @throws DataTypeNotFoundException
+     *
+     * @return MetadataType
      */
     public function createType($type, array $options = [])
     {

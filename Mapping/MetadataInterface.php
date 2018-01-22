@@ -24,5 +24,5 @@ interface MetadataInterface extends \Serializable
      *
      * @param MetadataInterface $metadata
      */
-    public function merge(MetadataInterface $metadata);
+    public function merge(self $metadata);
 }

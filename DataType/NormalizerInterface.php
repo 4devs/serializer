@@ -18,7 +18,7 @@ interface NormalizerInterface extends TypeInterface
     /**
      * Checks whether the given class is supported for normalization by this normalizer.
      *
-     * @param mixed $data    Data to normalize.
+     * @param mixed $data    data to normalize
      * @param array $options options data type
      *
      * @return bool

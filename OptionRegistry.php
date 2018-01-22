@@ -33,9 +33,9 @@ class OptionRegistry
     /**
      * @param string $name class or name
      *
-     * @return OptionInterface
-     *
      * @throws OptionNotFoundException
+     *
+     * @return OptionInterface
      */
     public function getOption($name)
     {
@@ -74,9 +74,9 @@ class OptionRegistry
     /**
      * @param string $name
      *
-     * @return mixed
-     *
      * @throws OptionNotFoundException
+     *
+     * @return mixed
      */
     private function createOption($name)
     {

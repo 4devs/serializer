@@ -9,7 +9,7 @@ class BooleanType extends AbstractType
      */
     public function denormalize($data, array $options, array $context = [])
     {
-        return $data === 'false' ? false : boolval($data);
+        return 'false' === $data ? false : boolval($data);
     }
 
     /**

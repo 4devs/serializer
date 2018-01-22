@@ -34,8 +34,8 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
     /**
      * Creates a new metadata factory.
      *
-     * @param LoaderInterface|null $loader The loader for configuring new metadata
-     * @param CacheItemPoolInterface|null $cache The cache for persisting metadata
+     * @param LoaderInterface|null        $loader The loader for configuring new metadata
+     * @param CacheItemPoolInterface|null $cache  The cache for persisting metadata
      *                                            between multiple PHP requests
      */
     public function __construct(LoaderInterface $loader = null, CacheItemPoolInterface $cache = null)

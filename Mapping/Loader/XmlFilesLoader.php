@@ -4,10 +4,10 @@ namespace FDevs\Serializer\Mapping\Loader;
 
 use FDevs\Serializer\Exception\MappingException;
 use FDevs\Serializer\Mapping\ClassMetadata;
+use FDevs\Serializer\Mapping\ClassMetadataInterface;
 use FDevs\Serializer\Mapping\MetadataType;
 use FDevs\Serializer\Mapping\PropertyMetadata;
 use Symfony\Component\Config\Util\XmlUtils;
-use FDevs\Serializer\Mapping\ClassMetadataInterface;
 
 class XmlFilesLoader extends FilesLoader
 {
@@ -39,9 +39,9 @@ class XmlFilesLoader extends FilesLoader
      *
      * @param string $file Path of file
      *
-     * @return \SimpleXMLElement
-     *
      * @throws MappingException
+     *
+     * @return \SimpleXMLElement
      */
     private function parseFile($file)
     {

@@ -2,6 +2,9 @@
 
 namespace FDevs\Serializer\Normalizer;
 
+use FDevs\Serializer\DataType\DenormalizerInterface as DenormalizerType;
+use FDevs\Serializer\DataType\NormalizerInterface as NormalizerType;
+use FDevs\Serializer\DataType\TypeInterface;
 use FDevs\Serializer\DataTypeFactory;
 use FDevs\Serializer\Exception\RuntimeException;
 use FDevs\Serializer\Mapping\Factory\MetadataFactoryInterface;
@@ -10,15 +13,12 @@ use FDevs\Serializer\Mapping\PropertyMetadata;
 use FDevs\Serializer\Option\NameConverterInterface;
 use FDevs\Serializer\Option\OptionInterface;
 use FDevs\Serializer\Option\VisibleInterface;
-use FDevs\Serializer\DataType\TypeInterface;
 use FDevs\Serializer\OptionRegistry;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use FDevs\Serializer\DataType\DenormalizerInterface as DenormalizerType;
-use FDevs\Serializer\DataType\NormalizerInterface as NormalizerType;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
 
@@ -48,9 +48,9 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
     /**
      * ObjectNormalizer constructor.
      *
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param DataTypeFactory|null $dataTypeFactory
-     * @param OptionRegistry|null $optionRegistry
+     * @param MetadataFactoryInterface       $metadataFactory
+     * @param DataTypeFactory|null           $dataTypeFactory
+     * @param OptionRegistry|null            $optionRegistry
      * @param PropertyAccessorInterface|null $propertyAccessor
      */
     public function __construct(MetadataFactoryInterface $metadataFactory, DataTypeFactory $dataTypeFactory = null, OptionRegistry $optionRegistry = null, PropertyAccessorInterface $propertyAccessor = null)
@@ -79,7 +79,7 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
             }
             foreach ($options as $name => $config) {
                 $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array)$config, $context)) {
+                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
                     continue 2;
                 }
             }
@@ -123,7 +123,7 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
             $propertyName = $this->nameConvert($propertyName, $options);
             foreach ($options as $name => $config) {
                 $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array)$config, $context)) {
+                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
                     continue 2;
                 }
             }
@@ -158,17 +158,19 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
 
     /**
      * @param string $propertyName
-     * @param array $options
+     * @param array  $options
      * @param string $type
-     * @return string
+     *
      * @throws \FDevs\Serializer\Exception\OptionNotFoundException
+     *
+     * @return string
      */
     private function nameConvert(string $propertyName, array $options, string $type = NameConverterInterface::TYPE_DENORMALIZE): string
     {
         foreach ($options as $name => $config) {
             $option = $this->getOption($name);
             if ($option instanceof NameConverterInterface) {
-                $propertyName = $option->convert($propertyName, (array)$config, $type);
+                $propertyName = $option->convert($propertyName, (array) $config, $type);
             }
         }
 
@@ -193,14 +195,14 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
      * is removed from the context before being returned to avoid side effects
      * when recursively normalizing an object graph.
      *
-     * @param array $data
+     * @param array  $data
      * @param string $class
-     * @param array $context
-     *
-     * @return object
+     * @param array  $context
      *
      * @throws RuntimeException
      * @throws \ReflectionException
+     *
+     * @return object
      */
     private function instantiateObject(array &$data, $class, array &$context)
     {
@@ -255,8 +257,10 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
 
     /**
      * @param $name
-     * @return OptionInterface
+     *
      * @throws \FDevs\Serializer\Exception\OptionNotFoundException
+     *
+     * @return OptionInterface
      */
     private function getOption(string $name)
     {

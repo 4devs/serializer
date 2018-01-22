@@ -18,7 +18,7 @@ interface DenormalizerInterface extends TypeInterface
     /**
      * Checks whether the given class is supported for denormalization by this normalizer.
      *
-     * @param mixed $data    Data to denormalize from.
+     * @param mixed $data    data to denormalize from
      * @param array $options options data type
      *
      * @return bool

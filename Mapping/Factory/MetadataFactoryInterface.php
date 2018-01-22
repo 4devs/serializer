@@ -10,7 +10,7 @@ interface MetadataFactoryInterface
     /**
      * Returns the metadata for the given value.
      *
-     * @param mixed $value Some object or class name
+     * @param mixed $value   Some object or class name
      * @param array $context
      *
      * @throws NoSuchMetadataException If no metadata exists for the given value
