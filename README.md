@@ -253,7 +253,7 @@ class VersionOption implements VisibleInterface
     /**
      * {@inheritdoc}
      */
-    public function isShow($propertyName, array $options, array $context)
+    public function isVisible($propertyName, $value, array $options, array $context)
     {
         return !isset($context[static::CONTEXT_KEY]) || !is_array($context[static::CONTEXT_KEY]) || !count($context[static::CONTEXT_KEY]) || $context[static::CONTEXT_KEY] == reset($options);
     }

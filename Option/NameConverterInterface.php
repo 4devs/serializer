@@ -2,19 +2,18 @@
 
 namespace FDevs\Serializer\Option;
 
+use FDevs\Serializer\OptionInterface;
+
 interface NameConverterInterface extends OptionInterface
 {
-    const TYPE_DENORMALIZE = 'denormalize';
-    const TYPE_NORMALIZE = 'normalize';
-
     /**
      * Converts a property name by type to value.
      *
      * @param string $propertyName name on data
      * @param array  $options      options in mapping
-     * @param string $type         type convert
+     * @param array  $context
      *
      * @return string
      */
-    public function convert($propertyName, array $options, $type = self::TYPE_NORMALIZE);
+    public function convert($propertyName, array $options, array $context = []);
 }

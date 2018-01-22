@@ -10,16 +10,16 @@ interface ClassMetadataInterface extends MetadataInterface, \Iterator, \ArrayAcc
     public function getReflectionClass();
 
     /**
-     * Adds an {@link MetadataInterface}.
+     * Adds an {@link PropertyMetadataInterface}.
      *
-     * @param MetadataInterface $metadata
+     * @param PropertyMetadataInterface $metadata
      */
-    public function addPropertyMetadata(MetadataInterface $metadata);
+    public function addPropertyMetadata(PropertyMetadataInterface $metadata);
 
     /**
-     * Gets the list of {@link MetadataInterface}.
+     * Gets the list of {@link PropertyMetadataInterface}.
      *
-     * @return MetadataInterface[]
+     * @return PropertyMetadataInterface[]
      */
     public function getPropertiesMetadata();
 }

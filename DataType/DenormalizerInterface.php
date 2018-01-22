@@ -2,7 +2,9 @@
 
 namespace FDevs\Serializer\DataType;
 
-interface DenormalizerInterface extends TypeInterface
+use FDevs\Serializer\OptionInterface;
+
+interface DenormalizerInterface extends OptionInterface
 {
     /**
      * Denormalizes data back into an object of the given class.

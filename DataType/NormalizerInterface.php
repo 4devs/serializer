@@ -2,7 +2,9 @@
 
 namespace FDevs\Serializer\DataType;
 
-interface NormalizerInterface extends TypeInterface
+use FDevs\Serializer\OptionInterface;
+
+interface NormalizerInterface extends OptionInterface
 {
     /**
      * Normalizes an object into a set of arrays/scalars.

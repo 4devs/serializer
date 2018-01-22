@@ -3,6 +3,7 @@
 namespace FDevs\Serializer\Mapping\Loader;
 
 use FDevs\Serializer\Exception\MappingException;
+use FDevs\Serializer\OptionRegistry;
 
 abstract class FilesLoader extends AbstractLoader implements LoaderInterface
 {
@@ -18,11 +19,12 @@ abstract class FilesLoader extends AbstractLoader implements LoaderInterface
      *
      * @throws MappingException if the mapping file does not exist or is not readable
      */
-    public function __construct(array $files = [])
+    public function __construct(array $files, OptionRegistry $registry)
     {
         foreach ($files as $class => $file) {
             $this->addFile($class, $file);
         }
+        parent::__construct($registry);
     }
 
     /**

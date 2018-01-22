@@ -2,63 +2,75 @@
 
 namespace FDevs\Serializer\Normalizer;
 
-use FDevs\Serializer\DataType\DenormalizerInterface as DenormalizerType;
-use FDevs\Serializer\DataType\NormalizerInterface as NormalizerType;
-use FDevs\Serializer\DataType\TypeInterface;
-use FDevs\Serializer\DataTypeFactory;
 use FDevs\Serializer\Exception\RuntimeException;
 use FDevs\Serializer\Mapping\Factory\MetadataFactoryInterface;
-use FDevs\Serializer\Mapping\MetadataType;
-use FDevs\Serializer\Mapping\PropertyMetadata;
-use FDevs\Serializer\Option\NameConverterInterface;
-use FDevs\Serializer\Option\OptionInterface;
-use FDevs\Serializer\Option\VisibleInterface;
-use FDevs\Serializer\OptionRegistry;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use FDevs\Serializer\PropertyFactoryInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
-use Symfony\Component\Serializer\SerializerAwareTrait;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
-    use SerializerAwareTrait;
+    /**
+     * @var DenormalizerInterface
+     */
+    private $denormalizer;
+
+    /**
+     * @var NormalizerInterface
+     */
+    private $normalizer;
+
     /**
      * @var MetadataFactoryInterface
      */
     private $metadataFactory;
 
     /**
-     * @var PropertyAccessorInterface
+     * @var PropertyFactoryInterface
      */
-    private $propertyAccessor;
+    private $propertyFactory;
 
     /**
-     * @var OptionRegistry
+     * @var bool
      */
-    private $optionRegistry;
+    private $strict;
 
     /**
-     * @var DataTypeFactory
+     * @var LoggerInterface|null
      */
-    private $dataType;
+    private $logger;
 
     /**
      * ObjectNormalizer constructor.
      *
-     * @param MetadataFactoryInterface       $metadataFactory
-     * @param DataTypeFactory|null           $dataTypeFactory
-     * @param OptionRegistry|null            $optionRegistry
-     * @param PropertyAccessorInterface|null $propertyAccessor
+     * @param MetadataFactoryInterface $metadataFactory
+     * @param PropertyFactoryInterface $propertyFactory
      */
-    public function __construct(MetadataFactoryInterface $metadataFactory, DataTypeFactory $dataTypeFactory = null, OptionRegistry $optionRegistry = null, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(MetadataFactoryInterface $metadataFactory, PropertyFactoryInterface $propertyFactory, $strict = true, LoggerInterface $logger = null)
     {
         $this->metadataFactory = $metadataFactory;
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
-        $this->dataType = $dataTypeFactory ?: new DataTypeFactory();
-        $this->optionRegistry = $optionRegistry ?: new OptionRegistry();
+        $this->propertyFactory = $propertyFactory;
+        $this->strict = $strict;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSerializer(SerializerInterface $serializer)
+    {
+        if ($serializer instanceof DenormalizerInterface) {
+            $this->denormalizer = $serializer;
+        }
+        if ($serializer instanceof NormalizerInterface) {
+            $this->normalizer = $serializer;
+        }
+
+        return $this;
     }
 
     /**
@@ -68,32 +80,20 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
     {
         $classMetadata = $this->metadataFactory->getMetadataFor($class);
         $normalizedData = [];
-        foreach ($classMetadata as $property) {
-            $options = array_merge($classMetadata->getOptions(), $property->getOptions());
-            $propertyName = $dataName = $property->getName();
-            $dataName = $this->nameConvert($propertyName, $options);
-            if (!isset($data[$dataName])) {
-                continue;
-            } else {
-                $value = $data[$dataName];
-            }
-            foreach ($options as $name => $config) {
-                $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
-                    continue 2;
+        $object = $this->instantiateObject($normalizedData, $class, $context);
+        foreach ($classMetadata as $propertyMetadata) {
+            try {
+                $property = $this->propertyFactory->createDenormalizeProperty($propertyMetadata, $context, $this->denormalizer ?: $this);
+                if (isset($data[$property->getName()])) {
+                    $value = $property->denormalize($data[$property->getName()]);
+                    $property->setValue($object, $value);
+                }
+            } catch (\Exception $e) {
+                $this->log(LogLevel::ERROR, $e->getMessage(), ['property' => $propertyMetadata, 'context' => $context, 'object' => $object, 'format' => $format]);
+                if ($this->strict) {
+                    throw $e;
                 }
             }
-            $propertyType = $property->getType();
-            $type = $this->getType($propertyType);
-            $optionsType = $this->resolve($propertyType);
-            if ($type instanceof DenormalizerType && $type->supportsDenormalization($value, $optionsType)) {
-                $normalizedData[$propertyName] = $type->denormalize($value, $optionsType, $context);
-            }
-        }
-
-        $object = $this->instantiateObject($normalizedData, $class, $context);
-        foreach ($normalizedData as $attribute => $value) {
-            $this->propertyAccessor->setValue($object, $attribute, $value);
         }
 
         return $object;
@@ -113,25 +113,21 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
     public function normalize($object, $format = null, array $context = [])
     {
         $classMetadata = $this->metadataFactory->getMetadataFor($object);
-
         $data = [];
-        /** @var PropertyMetadata $property */
-        foreach ($classMetadata as $property) {
-            $propertyName = $property->getName();
-            $value = $this->propertyAccessor->getValue($object, $propertyName);
-            $options = array_merge($classMetadata->getOptions(), $property->getOptions());
-            $propertyName = $this->nameConvert($propertyName, $options);
-            foreach ($options as $name => $config) {
-                $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
-                    continue 2;
+        foreach ($classMetadata as $propertyMetadata) {
+            try {
+                $property = $this->propertyFactory->createNormalizeProperty($propertyMetadata, $context, $this->normalizer ?: $this);
+                if ($property->isVisible()) {
+                    $value = $property->getValue($object);
+                    if ($property->isVisibleValue($value)) {
+                        $data[$property->getName()] = $property->normalize($value);
+                    }
                 }
-            }
-            $propertyType = $property->getType();
-            $type = $this->getType($propertyType);
-            $optionsType = $this->resolve($propertyType);
-            if ($type instanceof NormalizerType && $type->supportsNormalization($value, $optionsType)) {
-                $data[$propertyName] = $type->normalize($value, $optionsType, $context);
+            } catch (\Exception $e) {
+                $this->log(LogLevel::ERROR, $e->getMessage(), ['property' => $propertyMetadata, 'context' => $context, 'object' => $object, 'format' => $format]);
+                if ($this->strict) {
+                    throw $e;
+                }
             }
         }
 
@@ -147,44 +143,15 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
     }
 
     /**
-     * @param MetadataType $type
-     *
-     * @return TypeInterface
+     * @param string $level
+     * @param string $message
+     * @param array  $context
      */
-    private function getType(MetadataType $type)
+    private function log($level, $message, array $context = [])
     {
-        return $this->getDataType()->getType($type);
-    }
-
-    /**
-     * @param string $propertyName
-     * @param array  $options
-     * @param string $type
-     *
-     * @throws \FDevs\Serializer\Exception\OptionNotFoundException
-     *
-     * @return string
-     */
-    private function nameConvert(string $propertyName, array $options, string $type = NameConverterInterface::TYPE_DENORMALIZE): string
-    {
-        foreach ($options as $name => $config) {
-            $option = $this->getOption($name);
-            if ($option instanceof NameConverterInterface) {
-                $propertyName = $option->convert($propertyName, (array) $config, $type);
-            }
+        if ($this->logger) {
+            $this->logger->log($level, $message, $context);
         }
-
-        return $propertyName;
-    }
-
-    /**
-     * @param MetadataType $type
-     *
-     * @return array
-     */
-    private function resolve(MetadataType $type)
-    {
-        return $this->getDataType()->resolveOptions($type);
     }
 
     /**
@@ -199,10 +166,9 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
      * @param string $class
      * @param array  $context
      *
-     * @throws RuntimeException
-     * @throws \ReflectionException
-     *
      * @return object
+     *
+     * @throws RuntimeException
      */
     private function instantiateObject(array &$data, $class, array &$context)
     {
@@ -253,32 +219,5 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
         }
 
         return new $class();
-    }
-
-    /**
-     * @param $name
-     *
-     * @throws \FDevs\Serializer\Exception\OptionNotFoundException
-     *
-     * @return OptionInterface
-     */
-    private function getOption(string $name)
-    {
-        return $this->optionRegistry->getOption($name);
-    }
-
-    /**
-     * @return DataTypeFactory
-     */
-    private function getDataType()
-    {
-        if ($this->serializer instanceof NormalizerInterface) {
-            $this->dataType->setNormalizer($this->serializer);
-        }
-        if ($this->serializer instanceof DenormalizerInterface) {
-            $this->dataType->setDenormalizer($this->serializer);
-        }
-
-        return $this->dataType;
     }
 }

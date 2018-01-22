@@ -2,6 +2,7 @@
 
 namespace FDevs\Serializer\DataType;
 
+use FDevs\Serializer\Exception\MappingException;
 use FDevs\Serializer\Normalizer\DenormalizerAwareInterface;
 use FDevs\Serializer\Normalizer\DenormalizerAwareTrait;
 use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
@@ -13,20 +14,33 @@ class ObjectType extends AbstractType implements DenormalizerAwareInterface, Nor
     use DenormalizerAwareTrait;
     use NormalizerAwareTrait;
 
+    const KEY_MAX_DEPTH = 'KEY_MAX_DEPTH';
+
     /**
      * {@inheritdoc}
      */
     public function denormalize($data, array $options, array $context = [])
     {
-        return $this->getDenormalizer()->denormalize($data, $options['class'], null, $context);
+        if (!$options['data_class'] && !isset($context[$options['key']])) {
+            throw new MappingException(sprintf('set "data_class" or set context with key "%s"', $options['key']));
+        }
+        $dataClass = $options['data_class'] ?: $context[$options['key']];
+
+        return $this->getDenormalizer()->denormalize($data, $dataClass, $options['format'], $context);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, array $options, array $context = [])
+    public function normalize($object, array $options, array $context = [])
     {
-        return $this->getNormalizer()->normalize($data, null, $context);
+        $data = null;
+        if (!isset($context[self::KEY_MAX_DEPTH]) || $context[self::KEY_MAX_DEPTH] > 0) {
+            $context[self::KEY_MAX_DEPTH] = isset($context[self::KEY_MAX_DEPTH]) ? $context[self::KEY_MAX_DEPTH] - 1 : $options['max_depth'];
+            $data = $this->getNormalizer()->normalize($object, $options['format'], $context);
+        }
+
+        return $data;
     }
 
     /**
@@ -35,8 +49,16 @@ class ObjectType extends AbstractType implements DenormalizerAwareInterface, Nor
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['class'])
-            ->addAllowedTypes('class', ['string'])
-        ;
+            ->setDefined(['max_depth', 'format', 'data_class', 'key'])
+            ->setDefaults([
+                'max_depth' => 2,
+                'format' => null,
+                'data_class' => null,
+                'key' => 'data_class',
+            ])
+            ->addAllowedTypes('data_class', ['string', 'null'])
+            ->addAllowedTypes('key', ['string'])
+            ->addAllowedTypes('max_depth', ['integer'])
+            ->addAllowedTypes('format', ['integer', 'null']);
     }
 }
