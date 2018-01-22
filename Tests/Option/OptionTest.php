@@ -5,8 +5,9 @@ namespace FDevs\Serializer\Tests\Option;
 use FDevs\Serializer\Option\NameConverterInterface;
 use FDevs\Serializer\Option\OptionInterface;
 use FDevs\Serializer\Option\VisibleInterface;
+use PHPUnit\Framework\TestCase;
 
-abstract class OptionTest extends \PHPUnit_Framework_TestCase
+abstract class OptionTest extends TestCase
 {
     /**
      * @return OptionInterface|VisibleInterface|NameConverterInterface

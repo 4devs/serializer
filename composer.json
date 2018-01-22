@@ -25,7 +25,8 @@
     },
     "require-dev": {
         "composer/semver": "~1.4",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "phpunit/phpunit": "^6.5"
     },
     "suggest": {
         "composer/semver": "use with version options"
