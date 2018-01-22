@@ -2,7 +2,7 @@
 
 namespace FDevs\Serializer\Mapping;
 
-class ClassMetadata extends PropertyMetadata implements ClassMetadataInterface
+class ClassMetadata extends Metadata implements ClassMetadataInterface
 {
     /**
      * @var PropertyMetadata[]
@@ -57,9 +57,9 @@ class ClassMetadata extends PropertyMetadata implements ClassMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function addPropertyMetadata(MetadataInterface $metadata)
+    public function addPropertyMetadata(PropertyMetadataInterface $metadata)
     {
-        $this->properties[$metadata->getName()] = $metadata;
+        $this->setPropertyMetadata($metadata->getName(), $metadata);
 
         return $this;
     }
@@ -154,9 +154,9 @@ class ClassMetadata extends PropertyMetadata implements ClassMetadataInterface
     public function offsetSet($offset, $value)
     {
         if (null === $offset) {
-            $this->properties[] = $value;
+            $this->addPropertyMetadata($value);
         } else {
-            $this->properties[$offset] = $value;
+            $this->setPropertyMetadata($offset, $value);
         }
     }
 
@@ -166,5 +166,19 @@ class ClassMetadata extends PropertyMetadata implements ClassMetadataInterface
     public function offsetUnset($offset)
     {
         unset($this->properties[$offset]);
+    }
+
+    /**
+     * @param string                    $key
+     * @param PropertyMetadataInterface $metadata
+     *
+     * @return $this
+     */
+    protected function setPropertyMetadata($key, PropertyMetadataInterface $metadata)
+    {
+        $metadata->merge($this);
+        $this->properties[$key] = $metadata;
+
+        return $this;
     }
 }

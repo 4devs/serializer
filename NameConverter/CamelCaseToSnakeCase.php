@@ -1,11 +1,12 @@
 <?php
 
-namespace FDevs\Serializer\Option\NameConverter;
+namespace FDevs\Serializer\NameConverter;
 
+use FDevs\Serializer\Option\AbstractOption;
 use FDevs\Serializer\Option\NameConverterInterface;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
-class CamelCaseToSnakeCase implements NameConverterInterface
+class CamelCaseToSnakeCase extends AbstractOption implements NameConverterInterface
 {
     /**
      * @var CamelCaseToSnakeCaseNameConverter
@@ -25,7 +26,7 @@ class CamelCaseToSnakeCase implements NameConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function convert($propertyName, array $options, $type = self::TYPE_NORMALIZE)
+    public function convert($propertyName, array $options, array $context = [])
     {
         return $this->converter->normalize($propertyName);
     }
@@ -35,6 +36,6 @@ class CamelCaseToSnakeCase implements NameConverterInterface
      */
     public function getName()
     {
-        return 'camel_to_snake';
+        return 'camel-to-snake';
     }
 }

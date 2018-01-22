@@ -2,9 +2,10 @@
 
 namespace FDevs\Serializer\DataType;
 
+use FDevs\Serializer\Option\AbstractOption;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractType implements DenormalizerInterface, NormalizerInterface
+abstract class AbstractType extends AbstractOption implements DenormalizerInterface, NormalizerInterface
 {
     /**
      * {@inheritdoc}
@@ -18,7 +19,7 @@ abstract class AbstractType implements DenormalizerInterface, NormalizerInterfac
      */
     public function supportsDenormalization($data, array $options)
     {
-        return !is_null($data);
+        return true;
     }
 
     /**
@@ -26,6 +27,14 @@ abstract class AbstractType implements DenormalizerInterface, NormalizerInterfac
      */
     public function supportsNormalization($data, array $options)
     {
-        return !is_null($data);
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return substr(parent::getName(), 0, -5);
     }
 }

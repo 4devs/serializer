@@ -2,7 +2,9 @@
 
 namespace FDevs\Serializer\DataType;
 
-interface DenormalizerInterface extends TypeInterface
+use FDevs\Serializer\OptionInterface;
+
+interface DenormalizerInterface extends OptionInterface
 {
     /**
      * Denormalizes data back into an object of the given class.
@@ -18,7 +20,7 @@ interface DenormalizerInterface extends TypeInterface
     /**
      * Checks whether the given class is supported for denormalization by this normalizer.
      *
-     * @param mixed $data    Data to denormalize from.
+     * @param mixed $data    Data to denormalize from
      * @param array $options options data type
      *
      * @return bool

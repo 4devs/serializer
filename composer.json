@@ -17,16 +17,20 @@
     ],
     "require": {
         "symfony/serializer": "~2.8|~3.0",
-        "symfony/property-access": "~2.8|~3.0",
         "symfony/config": "~2.8|~3.0",
-        "psr/cache": "~1.0",
+        "symfony/options-resolver": "~2.8|~3.0",
+        "psr/log": "~1.0",
         "php": ">=5.5.9 || ^7.0"
     },
     "require-dev": {
+        "psr/cache": "~1.0",
+        "symfony/property-access": "~2.8|~3.0",
         "composer/semver": "~1.4"
     },
     "suggest": {
-        "composer/semver": "use with version options"
+        "composer/semver": "use with visible versions",
+        "symfony/property-access": "use with accessor property",
+        "psr/cache": "if cache class metadata"
     },
     "autoload": {
         "psr-4": {
