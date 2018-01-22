@@ -19,10 +19,12 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use FDevs\Serializer\DataType\DenormalizerInterface as DenormalizerType;
 use FDevs\Serializer\DataType\NormalizerInterface as NormalizerType;
-use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
+use Symfony\Component\Serializer\SerializerAwareInterface;
+use Symfony\Component\Serializer\SerializerAwareTrait;
 
-class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerInterface, DenormalizerInterface
+class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
+    use SerializerAwareTrait;
     /**
      * @var MetadataFactoryInterface
      */
@@ -46,9 +48,9 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
     /**
      * ObjectNormalizer constructor.
      *
-     * @param MetadataFactoryInterface       $metadataFactory
-     * @param DataTypeFactory|null           $dataTypeFactory
-     * @param OptionRegistry|null            $optionRegistry
+     * @param MetadataFactoryInterface $metadataFactory
+     * @param DataTypeFactory|null $dataTypeFactory
+     * @param OptionRegistry|null $optionRegistry
      * @param PropertyAccessorInterface|null $propertyAccessor
      */
     public function __construct(MetadataFactoryInterface $metadataFactory, DataTypeFactory $dataTypeFactory = null, OptionRegistry $optionRegistry = null, PropertyAccessorInterface $propertyAccessor = null)
@@ -77,7 +79,7 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
             }
             foreach ($options as $name => $config) {
                 $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
+                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array)$config, $context)) {
                     continue 2;
                 }
             }
@@ -121,7 +123,7 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
             $propertyName = $this->nameConvert($propertyName, $options);
             foreach ($options as $name => $config) {
                 $option = $this->getOption($name);
-                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array) $config, $context)) {
+                if ($option instanceof VisibleInterface && !$option->isShow($propertyName, (array)$config, $context)) {
                     continue 2;
                 }
             }
@@ -156,17 +158,17 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
 
     /**
      * @param string $propertyName
-     * @param array  $options
+     * @param array $options
      * @param string $type
-     *
      * @return string
+     * @throws \FDevs\Serializer\Exception\OptionNotFoundException
      */
-    private function nameConvert($propertyName, array $options, $type = NameConverterInterface::TYPE_DENORMALIZE)
+    private function nameConvert(string $propertyName, array $options, string $type = NameConverterInterface::TYPE_DENORMALIZE): string
     {
         foreach ($options as $name => $config) {
             $option = $this->getOption($name);
             if ($option instanceof NameConverterInterface) {
-                $propertyName = $option->convert($propertyName, (array) $config, $type);
+                $propertyName = $option->convert($propertyName, (array)$config, $type);
             }
         }
 
@@ -191,13 +193,14 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
      * is removed from the context before being returned to avoid side effects
      * when recursively normalizing an object graph.
      *
-     * @param array  $data
+     * @param array $data
      * @param string $class
-     * @param array  $context
+     * @param array $context
      *
      * @return object
      *
      * @throws RuntimeException
+     * @throws \ReflectionException
      */
     private function instantiateObject(array &$data, $class, array &$context)
     {
@@ -251,11 +254,11 @@ class ObjectNormalizer extends SerializerAwareNormalizer implements NormalizerIn
     }
 
     /**
-     * @param string $name
-     *
-     * @return OptionInterface|null
+     * @param $name
+     * @return OptionInterface
+     * @throws \FDevs\Serializer\Exception\OptionNotFoundException
      */
-    private function getOption($name)
+    private function getOption(string $name)
     {
         return $this->optionRegistry->getOption($name);
     }

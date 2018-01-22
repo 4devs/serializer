@@ -6,7 +6,7 @@ interface OptionInterface
 {
     /**
      * unique name option.
-     * 
+     *
      * @return string
      */
     public function getName();

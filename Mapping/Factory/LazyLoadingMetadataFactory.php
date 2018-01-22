@@ -34,8 +34,8 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
     /**
      * Creates a new metadata factory.
      *
-     * @param LoaderInterface|null        $loader The loader for configuring new metadata
-     * @param CacheItemPoolInterface|null $cache  The cache for persisting metadata
+     * @param LoaderInterface|null $loader The loader for configuring new metadata
+     * @param CacheItemPoolInterface|null $cache The cache for persisting metadata
      *                                            between multiple PHP requests
      */
     public function __construct(LoaderInterface $loader = null, CacheItemPoolInterface $cache = null)
@@ -47,7 +47,7 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadataFor($value)
+    public function getMetadataFor($value, array $context = []): ClassMetadataInterface
     {
         if (!is_object($value) && !is_string($value)) {
             throw new NoSuchMetadataException(sprintf('Cannot create metadata for non-objects. Got: %s', gettype($value)));
@@ -98,7 +98,7 @@ class LazyLoadingMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasMetadataFor($value)
+    public function hasMetadataFor($value, array $context = []): bool
     {
         if (!is_object($value) && !is_string($value)) {
             return false;
