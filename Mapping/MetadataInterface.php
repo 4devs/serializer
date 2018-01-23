@@ -7,12 +7,12 @@ interface MetadataInterface extends \Serializable
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return array
      */
-    public function getOptions();
+    public function getOptions(): array;
 
     /**
      * Merges a {@link MetadataInterface} in the current one.

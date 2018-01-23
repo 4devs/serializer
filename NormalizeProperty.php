@@ -68,6 +68,6 @@ class NormalizeProperty extends Property implements NormalizePropertyInterface
      */
     public function normalize($value)
     {
-        return $this->optionManager->normalize($this->meta->getType(), $value, $this->context, $this->normalizer);
+        return $this->meta->isNullable() && null === $value ? $value : $this->optionManager->normalize($this->meta->getType(), $value, $this->context, $this->normalizer);
     }
 }
