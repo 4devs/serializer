@@ -3,8 +3,8 @@
 namespace FDevs\Serializer\Visible;
 
 use FDevs\Serializer\Option\VisibleInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use FDevs\Serializer\Visibility\Field as Visibility;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Field extends Visibility implements VisibleInterface
 {

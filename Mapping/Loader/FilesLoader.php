@@ -31,9 +31,9 @@ abstract class FilesLoader extends AbstractLoader implements LoaderInterface
      * @param string $class
      * @param string $file
      *
-     * @return $this
-     *
      * @throws MappingException
+     *
+     * @return $this
      */
     public function addFile($class, $file)
     {

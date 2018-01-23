@@ -9,7 +9,7 @@ trait ClassResolverTrait
      *
      * @return string
      */
-    public function getClass($value)
+    private function getClass($value)
     {
         return ltrim(is_object($value) ? get_class($value) : $value, '\\');
     }

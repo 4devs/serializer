@@ -121,7 +121,7 @@ class ClassMetadata extends Metadata implements ClassMetadataInterface
      */
     public function valid()
     {
-        return key($this->properties) !== null;
+        return null !== key($this->properties);
     }
 
     /**

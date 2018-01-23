@@ -97,7 +97,7 @@ class ArrayType extends AbstractType implements OptionRegistryAwareInterface
 
     /**
      * @param OptionInterface $type
-     * @param array        $options
+     * @param array           $options
      *
      * @return array
      */

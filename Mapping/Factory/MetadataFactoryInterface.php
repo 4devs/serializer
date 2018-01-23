@@ -10,20 +10,22 @@ interface MetadataFactoryInterface
     /**
      * Returns the metadata for the given value.
      *
-     * @param mixed $value Some object or class name
-     *
-     * @return ClassMetadataInterface The metadata for the value
+     * @param mixed $value   Some object or class name
+     * @param array $context
      *
      * @throws NoSuchMetadataException If no metadata exists for the given value
+     *
+     * @return ClassMetadataInterface The metadata for the value
      */
-    public function getMetadataFor($value);
+    public function getMetadataFor($value, array $context = []): ClassMetadataInterface;
 
     /**
      * Returns whether the class is able to return metadata for the given value.
      *
-     * @param mixed $value Some object or class name
+     * @param mixed $value
+     * @param array $context
      *
      * @return bool Whether metadata can be returned for that value
      */
-    public function hasMetadataFor($value);
+    public function hasMetadataFor($value, array $context = []): bool;
 }

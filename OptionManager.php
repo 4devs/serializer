@@ -2,17 +2,17 @@
 
 namespace FDevs\Serializer;
 
-use FDevs\Serializer\Exception\UnsupportedDataTypeException;
-use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
-use FDevs\Serializer\Visibility\AdvancedVisibilityInterface;
-use FDevs\Serializer\Visibility\VisibilityInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use FDevs\Serializer\DataType\NormalizerInterface as DataNormalizer;
+use FDevs\Serializer\Exception\UnsupportedDataTypeException;
 use FDevs\Serializer\Mapping\MetadataInterface;
 use FDevs\Serializer\Normalizer\DenormalizerAwareInterface;
+use FDevs\Serializer\Normalizer\NormalizerAwareInterface;
 use FDevs\Serializer\Option\AccessorInterface;
 use FDevs\Serializer\Option\NameConverterInterface;
+use FDevs\Serializer\Visibility\AdvancedVisibilityInterface;
+use FDevs\Serializer\Visibility\VisibilityInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class OptionManager implements OptionManagerInterface

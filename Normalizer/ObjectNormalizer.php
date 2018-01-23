@@ -166,9 +166,9 @@ class ObjectNormalizer implements NormalizerInterface, DenormalizerInterface, Se
      * @param string $class
      * @param array  $context
      *
-     * @return object
-     *
      * @throws RuntimeException
+     *
+     * @return object
      */
     private function instantiateObject(array &$data, $class, array &$context)
     {

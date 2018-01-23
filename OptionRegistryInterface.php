@@ -15,9 +15,9 @@ interface OptionRegistryInterface
     /**
      * @param string $name
      *
-     * @return AbstractType
-     *
      * @throws OptionNotFoundException
+     *
+     * @return AbstractType
      */
     public function getDataType($name);
 }

@@ -2,6 +2,7 @@
 
 namespace FDevs\Serializer\Mapping\Factory;
 
+use FDevs\Serializer\Mapping\ClassMetadataInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class CacheMetadataFactory implements MetadataFactoryInterface
@@ -33,7 +34,7 @@ class CacheMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadataFor($value)
+    public function getMetadataFor($value, array $context = []): ClassMetadataInterface
     {
         $class = $this->getClass($value);
         // Key cannot contain backslashes according to PSR-6
@@ -53,7 +54,7 @@ class CacheMetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasMetadataFor($value)
+    public function hasMetadataFor($value, array $context = []): bool
     {
         return $this->factory->hasMetadataFor($value);
     }

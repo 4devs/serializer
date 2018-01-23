@@ -15,6 +15,7 @@ interface NormalizePropertyInterface extends PropertyInterface
      * @return bool
      */
     public function isVisible();
+
     /**
      * @param object $object
      *

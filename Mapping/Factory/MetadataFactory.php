@@ -37,7 +37,7 @@ class MetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadataFor($value)
+    public function getMetadataFor($value, array $context = []): ClassMetadataInterface
     {
         if (!is_object($value) && !is_string($value)) {
             throw new NoSuchMetadataException(sprintf('Cannot create metadata for non-objects. Got: %s', gettype($value)));
@@ -77,7 +77,7 @@ class MetadataFactory implements MetadataFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasMetadataFor($value)
+    public function hasMetadataFor($value, array $context = []): bool
     {
         if (!is_object($value) && !is_string($value)) {
             return false;
