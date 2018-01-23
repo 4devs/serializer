@@ -18,9 +18,9 @@ class Metadata implements MetadataInterface
      * Metadata constructor.
      *
      * @param string $name
-     * @param array  $options
+     * @param array $options
      */
-    public function __construct($name, array $options = [])
+    public function __construct(string $name, array $options = [])
     {
         $this->name = $name;
         $this->options = $options;
@@ -29,7 +29,7 @@ class Metadata implements MetadataInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -49,7 +49,7 @@ class Metadata implements MetadataInterface
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

@@ -16,6 +16,7 @@ class ClassMetadata extends Metadata implements ClassMetadataInterface
 
     /**
      * @return \ReflectionClass
+     * @throws \ReflectionException
      */
     public function getReflectionClass()
     {

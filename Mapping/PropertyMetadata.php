@@ -7,32 +7,37 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * @var MetadataInterface
      */
-    protected $type;
+    private $type;
 
     /**
-     * @var MetadataInterface[]
+     * @var bool
      */
-    protected $visibility = [];
+    private $nullable = false;
 
     /**
-     * @var MetadataInterface[]
+     * @var MetadataInterface[]|\iterable
      */
-    protected $advancedVisibility = [];
+    private $visibility = [];
 
     /**
-     * @var MetadataInterface[]
+     * @var MetadataInterface[]|\iterable
      */
-    protected $nameConverter = [];
+    private $advancedVisibility = [];
 
     /**
-     * @var MetadataInterface
+     * @var MetadataInterface[]|\iterable
      */
-    protected $accessor = [];
+    private $nameConverter = [];
+
+    /**
+     * @var MetadataInterface|\iterable
+     */
+    private $accessor = [];
 
     /**
      * @return MetadataInterface
      */
-    public function getType()
+    public function getType(): MetadataInterface
     {
         return $this->type;
     }
@@ -42,7 +47,7 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
      *
      * @return PropertyMetadata
      */
-    public function setType(MetadataInterface $type)
+    public function setType(MetadataInterface $type): self
     {
         $this->type = $type;
 
@@ -52,29 +57,7 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getVisible()
-    {
-        return $this->advancedVisibility;
-    }
-
-    /**
-     * @param MetadataInterface $visible
-     *
-     * @return $this
-     *
-     * @deprecated
-     */
-    public function addVisible(MetadataInterface $visible)
-    {
-        $this->advancedVisibility[] = $visible;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVisibility()
+    public function getVisibility(): \iterable
     {
         return $this->visibility;
     }
@@ -82,17 +65,27 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdvancedVisibility()
+    public function getAdvancedVisibility(): \iterable
     {
         return $this->advancedVisibility;
     }
 
     /**
-     * @param MetadataInterface $visibility
+     * {@inheritdoc}
      */
-    public function addVisibility(MetadataInterface $visibility)
+    public function isNullable(): bool
+    {
+        return $this->nullable;
+    }
+
+    /**
+     * @param MetadataInterface $visibility
+     * @return $this
+     */
+    public function addVisibility(MetadataInterface $visibility): self
     {
         $this->visibility[] = $visibility;
+        return $this;
     }
 
     /**
@@ -106,7 +99,7 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getNameConverter()
+    public function getNameConverter(): \iterable
     {
         return $this->nameConverter;
     }
@@ -126,7 +119,7 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getAccessor()
+    public function getAccessor(): MetadataInterface
     {
         return $this->accessor;
     }
@@ -151,7 +144,9 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
         return serialize([
             $this->type,
             $this->accessor,
-            $this->visible,
+            $this->visibility,
+            $this->advancedVisibility,
+            $this->nullable,
             $this->nameConverter,
             parent::serialize(),
         ]);
@@ -165,7 +160,9 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
         list(
             $this->type,
             $this->accessor,
-            $this->visible,
+            $this->visibility,
+            $this->advancedVisibility,
+            $this->nullable,
             $this->nameConverter,
             $parentStr) = unserialize($str);
         parent::unserialize($parentStr);
