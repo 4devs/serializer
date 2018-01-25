@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-namespace FDevs\Serializer\Exception;
+namespace FDevs\Serializer\Guess;
 
-class MappingException extends Exception
+class GuessInterface
 {
 }
