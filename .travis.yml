@@ -9,4 +9,5 @@ before_script:
   - composer --prefer-source install
 
 script:
+  - bin/php-cs-fixer fix . --dry-run
   - bin/phpunit
