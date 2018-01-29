@@ -26,11 +26,13 @@
     },
     "require-dev": {
         "composer/semver": "~1.4",
+        "symfony/property-info": "^4.0",
         "friendsofphp/php-cs-fixer": "^2.10",
         "phpunit/phpunit": "^6.5"
     },
     "suggest": {
-        "composer/semver": "use with visible versions"
+        "composer/semver": "use with visible versions",
+        "symfony/property-info": "use guess property info"
     },
     "config":{
         "bin-dir": "bin",
