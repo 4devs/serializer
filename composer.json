@@ -22,17 +22,16 @@
         "symfony/config": "~4.0",
         "symfony/options-resolver": "^4.0",
         "symfony/property-access": "~4.0",
+        "symfony/property-info": "^4.0",
         "symfony/serializer": "~4.0"
     },
     "require-dev": {
         "composer/semver": "~1.4",
-        "symfony/property-info": "^4.0",
         "friendsofphp/php-cs-fixer": "^2.10",
         "phpunit/phpunit": "^6.5"
     },
     "suggest": {
-        "composer/semver": "use with visible versions",
-        "symfony/property-info": "use guess property info"
+        "composer/semver": "use with visible versions"
     },
     "config":{
         "bin-dir": "bin",

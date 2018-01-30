@@ -10,6 +10,7 @@
 namespace FDevs\Serializer\Mapping\Guess\Type;
 
 use FDevs\Serializer\Mapping\Guess\Guess;
+use FDevs\Serializer\Mapping\Guess\GuessInterface;
 use FDevs\Serializer\Mapping\Guess\TypeGuesserInterface;
 use FDevs\Serializer\Mapping\Guess\TypeGuessInterface;
 
@@ -35,14 +36,20 @@ class ChainTypeGuesser implements TypeGuesserInterface
      */
     public function guessType(string $class, string $property, array $context = []): ?TypeGuessInterface
     {
-        $guesses = [];
+        $result = null;
+        $maxConfidence = -1;
+
         foreach ($this->guesser as $item) {
             $guess = $item->guessType($class, $property, $context);
-            if (null !== $guess) {
-                $guesses[] = $guess;
+            if (null !== $guess && $maxConfidence < $confidence = $guess->getConfidence()) {
+                $maxConfidence = $confidence;
+                $result = $guess;
+                if ($confidence >= GuessInterface::VERY_HIGH_CONFIDENCE) {
+                    break;
+                }
             }
         }
 
-        return Guess::getBestGuess($guesses);
+        return $result;
     }
 }

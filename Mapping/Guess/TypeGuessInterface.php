@@ -9,7 +9,7 @@
 
 namespace FDevs\Serializer\Mapping\Guess;
 
-interface TypeGuessInterface
+interface TypeGuessInterface extends GuessInterface
 {
     /**
      * @return bool
