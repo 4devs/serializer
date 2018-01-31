@@ -7,39 +7,38 @@
  * file that was distributed with this source code.
  */
 
-namespace FDevs\Serializer\Mapping\Guess\Type;
+namespace FDevs\Serializer\Mapping\Guess\Accessor;
 
+use FDevs\Serializer\Mapping\Guess\AccessorGuesserInterface;
 use FDevs\Serializer\Mapping\Guess\GuessInterface;
-use FDevs\Serializer\Mapping\Guess\TypeGuesserInterface;
-use FDevs\Serializer\Mapping\Guess\TypeGuessInterface;
 
-class ChainTypeGuesser implements TypeGuesserInterface
+class ChainAccessorGuesser implements AccessorGuesserInterface
 {
     /**
-     * @var iterable|TypeGuesserInterface[]
+     * @var iterable|AccessorGuesserInterface[]
      */
-    private $guesser;
+    private $accessors;
 
     /**
-     * ChainGuesser constructor.
+     * ChainAccessorGuesser constructor.
      *
-     * @param TypeGuesserInterface[]|iterable $guesser
+     * @param AccessorGuesserInterface[]|iterable $accessors
      */
-    public function __construct(iterable $guesser)
+    public function __construct(iterable $accessors)
     {
-        $this->guesser = $guesser;
+        $this->accessors = $accessors;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function guessType(string $class, string $property, array $context = []): ?TypeGuessInterface
+    public function guessAccessor(string $class, string $property, array $context = []): ?GuessInterface
     {
         $result = null;
         $maxConfidence = -1;
 
-        foreach ($this->guesser as $item) {
-            $guess = $item->guessType($class, $property, $context);
+        foreach ($this->accessors as $accessor) {
+            $guess = $accessor->guessAccessor($class, $property, $context);
             if (null !== $guess && $maxConfidence < $confidence = $guess->getConfidence()) {
                 $maxConfidence = $confidence;
                 $result = $guess;

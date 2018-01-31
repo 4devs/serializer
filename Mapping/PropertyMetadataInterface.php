@@ -33,6 +33,8 @@ interface PropertyMetadataInterface extends MetadataInterface
 
     /**
      * @return MetadataInterface[]|\iterable
+     *
+     * @deprecated
      */
     public function getNameConverter(): \iterable;
 
