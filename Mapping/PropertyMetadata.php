@@ -86,6 +86,18 @@ class PropertyMetadata extends Metadata implements PropertyMetadataInterface
     }
 
     /**
+     * @param bool $nullable
+     *
+     * @return PropertyMetadata
+     */
+    public function setNullable(bool $nullable): self
+    {
+        $this->nullable = $nullable;
+
+        return $this;
+    }
+
+    /**
      * @param MetadataInterface $visibility
      *
      * @return $this

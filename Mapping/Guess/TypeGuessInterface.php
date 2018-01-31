@@ -7,8 +7,12 @@
  * file that was distributed with this source code.
  */
 
-namespace FDevs\Serializer\Guess;
+namespace FDevs\Serializer\Mapping\Guess;
 
-class GuessInterface
+interface TypeGuessInterface extends GuessInterface
 {
+    /**
+     * @return bool
+     */
+    public function isNullable(): bool;
 }

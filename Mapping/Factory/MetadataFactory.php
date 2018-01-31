@@ -14,6 +14,13 @@ use FDevs\Serializer\Mapping\ClassMetadata;
 use FDevs\Serializer\Mapping\ClassMetadataInterface;
 use FDevs\Serializer\Mapping\Loader\LoaderInterface;
 
+@trigger_error('The "FDevs\Serializer\Mapping\Factory\MetadataFactory" service is deprecated. You should use FDevs\Serializer\Mapping\Factory\ClassMetadataFactory.', E_USER_DEPRECATED);
+
+/**
+ * Class MetadataFactory.
+ *
+ * @deprecated
+ */
 class MetadataFactory implements MetadataFactoryInterface
 {
     /**
